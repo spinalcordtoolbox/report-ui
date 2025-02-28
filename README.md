@@ -16,12 +16,12 @@ We use [Vite](https://github.com/spinalcordtoolbox/spinalcordtoolbox/tree/master
 0. Install [npm](https://www.npmjs.com) and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable)
 1. Clone the repository
 2. In the repo, run `yarn`
-3. Run a development server with hot module replacement with `yarn dev`.
+3. Run a development server with hot module replacement with `yarn dev`. It'll print a link you can click or copy into your browser.
 
 ### Building for production
 
 1. `yarn build`
-2. Open the bundled index.html in your browser `:)`
+2. Open the bundled index.html in your browser `:)` - it'll live in `dist/`
 
 ### File bundling
 
@@ -51,7 +51,3 @@ as the plugin runs.
 In order to add data to the report, simply overwrite `datasets.js`, which is a simple JS file that
 populates `window.SCT_QC_DATASETS` with a JSON array of datasets. You can find a reference version in
 `public/datasets.js`
-
-```
-
-```
