@@ -1,54 +1,57 @@
-# React + TypeScript + Vite
+# Spinal Cord Toolbox QC Report Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This package bundles the UI for [SCT QC reports](https://github.com/spinalcordtoolbox/spinalcordtoolbox/tree/master/spinalcordtoolbox/reports).
 
-Currently, two official plugins are available:
+- [Generating reports](https://spinalcordtoolbox.com/stable/overview/concepts/inspecting-results-qc-fsleyes.html)
+- [Design document](https://github.com/spinalcordtoolbox/spinalcordtoolbox/wiki/Programming:-QC-Reports)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Development
 
-## Expanding the ESLint configuration
+We use [Vite](https://github.com/spinalcordtoolbox/spinalcordtoolbox/tree/master/spinalcordtoolbox/reports) for building,
+[React](https://react.dev) to manage the DOM, and [tailwind](https://tailwindcss.com) for styling.
+[Typescript](https://www.typescriptlang.org) keeps our runtime errors to a minimum.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Installation
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+0. Install [npm](https://www.npmjs.com) and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable)
+1. Clone the repository
+2. In the repo, run `yarn`
+3. Run a development server with hot module replacement with `yarn dev`.
+
+### Building for production
+
+1. `yarn build`
+2. Open the bundled index.html in your browser `:)`
+
+### File bundling
+
+Since a main use case for QC reports is offline generation and viewing, and since modern browsers
+don't trust filesystem resources without modifying the browser, we need a way to package
+the built JS and CSS that doesn't trigger CORS errors. The original way this was done seems to be by
+appending the `<script>` tags to the body with relative import paths like `_assets/main.js`.
+
+Vite by default packages distributed JS and CSS the standard way, as minified modules. Lucky for us,
+there's already a [great plugin](https://github.com/richardtallent/vite-plugin-singlefile) that
+stuffs all the generated code into index.html. This, obviously, makes for a messy HTML file, but it
+has the advantage of living in a single file that we can distribute.
+
+Running `yarn build`, you'll see something like
+
+```
+rendering chunks (1)...
+
+Inlining: index-D6DutMGV.js
+Inlining: style-CLOgedyW.css
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+as the plugin runs.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Injecting datasets
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+In order to add data to the report, simply overwrite `datasets.js`, which is a simple JS file that
+populates `window.SCT_QC_DATASETS` with a JSON array of datasets. You can find a reference version in
+`public/datasets.js`
+
+```
+
 ```

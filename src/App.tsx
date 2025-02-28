@@ -1,34 +1,38 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import classNames from 'classnames'
+import { replace } from 'util/replace'
+
+export interface Dataset {
+  label: string
+  count: number
+}
+
+// ugly way to convince Typescript to accept our hacky global
+const INITIAL_DATASETS = (window as any).SCT_QC_DATASETS as Array<Dataset>
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [datasets, setDatasets] = useState<Array<Dataset>>(INITIAL_DATASETS)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className="h-dvh flex flex-col p-4 items-center justify-center">
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+
+      {datasets.map(({ label, count }, i) => (
+        <button
+          key={i}
+          className={classNames(
+            'mt-4 p-2 py-0 border-black/50 border-2 rounded-sm max-w-fit',
+            'cursor-pointer font-bold transition-colors',
+            'hover:bg-slate-300',
+          )}
+          onClick={() =>
+            setDatasets(replace(datasets, i, { label, count: count + 1 }))
+          }
+        >
+          {label} count is {count}
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      ))}
+    </div>
   )
 }
 
