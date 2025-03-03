@@ -1,23 +1,59 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import classNames from 'classnames'
-import { replace } from 'util/replace'
 
 import logoUrl from 'assets/sct_logo.png'
+import { Table } from 'components/Table'
 
 export interface Dataset {
-  label: string
-  count: number
+  cwd: string
+  cmdline: string
+  command: string
+  sctVersion: string
+  dataset: string
+  subject: string
+  contrast: string
+  inputFile: string
+  plane: string
+  backgroundImage: string
+  overlayImage: string
+  date: string
+  rank: string
+  qc: string
 }
 
 // ugly way to convince Typescript to accept our hacky global
 const INITIAL_DATASETS = (window as any).SCT_QC_DATASETS as Array<Dataset>
 
+function cleanDataset(dataset: Dataset): Dataset {
+  return {
+    ...dataset,
+    backgroundImage: dataset.backgroundImage.replace(/^([^/])/, '/$1'),
+    overlayImage: dataset.overlayImage.replace(/^([^/])/, '/$1'),
+  }
+}
+
 function App() {
-  const [datasets, setDatasets] = useState<Array<Dataset>>(INITIAL_DATASETS)
+  const [datasets, setDatasets] = useState<Array<Dataset>>(
+    INITIAL_DATASETS.map(cleanDataset),
+  )
+
+  const [backgroundImage, setBackgroundImage] = useState('')
+  const [overlayImage, setOverlayImage] = useState('')
+
+  const [showOverlay, setShowOverlay] = useState(true)
+
+  const handleSelectRow = useCallback(
+    (cmdline: string) => {
+      const dataset = datasets.find((r) => r.cmdline == cmdline)
+      setBackgroundImage(dataset?.backgroundImage ?? '')
+      setOverlayImage(dataset?.overlayImage ?? '')
+    },
+    [datasets],
+  )
 
   return (
     <>
-      <nav className="min-h-12 mr-auto ml-auto px-4 border-b-2 border-gray-200 bg-gray-100">
+      <nav className="h-12 mr-auto ml-auto px-4 border-b-2 border-gray-200 bg-gray-100 ">
         <div className="flex flex-row flex-nowrap justify-between items-center">
           <a href="#" className="text-gray-500 hover:text-gray-700">
             <div className="flex flex-row flex-nowrap items-center">
@@ -35,24 +71,33 @@ function App() {
           </a>
         </div>
       </nav>
-      <div className="h-dvh flex flex-col p-4 items-center justify-center">
-        <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <div className="h-[calc(100vh_-_--spacing(12))] flex flex-row p-4 justify-center flex-wrap sm:flex-nowrap space-x-4">
+        <Table
+          datasets={datasets}
+          onChangeDatasets={setDatasets}
+          onSelectRow={handleSelectRow}
+          onToggleShowOverlay={() => setShowOverlay(!showOverlay)}
+        />
 
-        {datasets.map(({ label, count }, i) => (
-          <button
-            key={i}
-            className={classNames(
-              'mt-4 p-2 py-0 border-black/50 border-2 rounded-sm max-w-fit',
-              'cursor-pointer font-bold transition-colors',
-              'hover:bg-slate-300',
-            )}
-            onClick={() =>
-              setDatasets(replace(datasets, i, { label, count: count + 1 }))
-            }
-          >
-            {label} count is {count}
-          </button>
-        ))}
+        <div className="h-full w-1/2 relative">
+          <div className="absolute top-4 left-4 right-4 bottom-4">
+            {backgroundImage ? (
+              <img
+                className="absolute h-full w-full top-0 left-0 object-contain"
+                src={backgroundImage}
+              />
+            ) : null}
+            {overlayImage ? (
+              <img
+                className={classNames(
+                  'absolute h-full w-full top-0 left-0 object-contain transition-opacity duration-50',
+                  showOverlay ? 'opacity-100' : 'opacity-0',
+                )}
+                src={overlayImage}
+              />
+            ) : null}
+          </div>
+        </div>
       </div>
     </>
   )
