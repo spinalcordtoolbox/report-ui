@@ -13,7 +13,7 @@ We use [Vite](https://vite.dev/) for building,
 
 ### Installation
 
-0. Install [npm](https://www.npmjs.com) and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable)
+0. Install [npm](https://www.npmjs.com) and [yarn](https://yarnpkg.com/getting-started/install)
 1. Clone the repository
 2. In the repo, run `yarn`
 3. Run a development server with hot module replacement with `yarn dev`. It'll print a link you can click or copy into your browser.

@@ -35,5 +35,6 @@
     "vite": "^6.2.0",
     "vite-plugin-singlefile": "^2.1.0",
     "vite-tsconfig-paths": "^5.1.4"
-  }
+  },
+  "packageManager": "yarn@4.7.0"
 }
