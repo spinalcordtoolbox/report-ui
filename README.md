@@ -7,7 +7,7 @@ This package bundles the UI for [SCT QC reports](https://github.com/spinalcordto
 
 ## Development
 
-We use [Vite](https://github.com/spinalcordtoolbox/spinalcordtoolbox/tree/master/spinalcordtoolbox/reports) for building,
+We use [Vite](https://vite.dev/) for building,
 [React](https://react.dev) to manage the DOM, and [tailwind](https://tailwindcss.com) for styling.
 [Typescript](https://www.typescriptlang.org) keeps our runtime errors to a minimum.
 
