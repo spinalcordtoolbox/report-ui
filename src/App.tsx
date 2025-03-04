@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 import logoUrl from 'assets/sct_logo.png'
 import { Table } from 'components/Table'
 import { ImageOverlay } from 'components/ImageOverlay'
+import Legend from 'components/Legend'
 
 export interface Dataset {
   cwd: string
@@ -72,13 +73,16 @@ function App() {
         </div>
       </nav>
       <div className="h-[calc(100vh_-_--spacing(12))] p-4 flex flex-col flex-nowrap lg:flex-row">
-        <div className="flex-1 overflow-y-scroll">
-          <Table
-            datasets={datasets}
-            onChangeDatasets={setDatasets}
-            onSelectRow={handleSelectRow}
-            onToggleShowOverlay={() => setShowOverlay(!showOverlay)}
-          />
+        <div className="flex-1 flex flex-col">
+          <Legend />
+          <div className="overflow-y-scroll ">
+            <Table
+              datasets={datasets}
+              onChangeDatasets={setDatasets}
+              onSelectRow={handleSelectRow}
+              onToggleShowOverlay={() => setShowOverlay(!showOverlay)}
+            />
+          </div>
         </div>
 
         <div className="flex-1 relative">
