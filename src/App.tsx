@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react'
-import classNames from 'classnames'
 
 import logoUrl from 'assets/sct_logo.png'
 import { Table } from 'components/Table'
+import { ImageOverlay } from 'components/ImageOverlay'
 
 export interface Dataset {
   cwd: string
@@ -71,32 +71,22 @@ function App() {
           </a>
         </div>
       </nav>
-      <div className="h-[calc(100vh_-_--spacing(12))] flex flex-row p-4 justify-center flex-wrap sm:flex-nowrap space-x-4">
-        <Table
-          datasets={datasets}
-          onChangeDatasets={setDatasets}
-          onSelectRow={handleSelectRow}
-          onToggleShowOverlay={() => setShowOverlay(!showOverlay)}
-        />
+      <div className="h-[calc(100vh_-_--spacing(12))] p-4 flex flex-col flex-nowrap lg:flex-row">
+        <div className="flex-1 overflow-y-scroll">
+          <Table
+            datasets={datasets}
+            onChangeDatasets={setDatasets}
+            onSelectRow={handleSelectRow}
+            onToggleShowOverlay={() => setShowOverlay(!showOverlay)}
+          />
+        </div>
 
-        <div className="h-full w-1/2 relative">
-          <div className="absolute top-4 left-4 right-4 bottom-4">
-            {backgroundImage ? (
-              <img
-                className="absolute h-full w-full top-0 left-0 object-contain"
-                src={backgroundImage}
-              />
-            ) : null}
-            {overlayImage ? (
-              <img
-                className={classNames(
-                  'absolute h-full w-full top-0 left-0 object-contain transition-opacity duration-50',
-                  showOverlay ? 'opacity-100' : 'opacity-0',
-                )}
-                src={overlayImage}
-              />
-            ) : null}
-          </div>
+        <div className="flex-1 relative">
+          <ImageOverlay
+            backgroundImage={backgroundImage}
+            overlayImage={overlayImage}
+            showOverlay={showOverlay}
+          />
         </div>
       </div>
     </>
