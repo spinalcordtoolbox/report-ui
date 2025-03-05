@@ -97,7 +97,7 @@ function App() {
             'flex flex-col justify-center items-center flex-nowrap space-y-4',
           )}
         >
-          <div className="relative w-full h-[calc(100%_-_--spacing(24))] lg:mt-24">
+          <div className="relative w-full h-[calc(100%_-_--spacing(24))]">
             <ImageOverlay
               backgroundImage={backgroundImage}
               overlayImage={overlayImage}
