@@ -32,6 +32,7 @@ export function ImageOverlay({
   const [imagesLoaded, setImagesLoaded] = useState(false)
 
   useEffect(() => {
+    if (!backgroundImage && !overlayImage) return
     // sync doesn't matter, just render
     if (!backgroundImage.endsWith('.gif') && !overlayImage.endsWith('.gif')) {
       setImagesLoaded(true)

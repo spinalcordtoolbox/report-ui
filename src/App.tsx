@@ -72,20 +72,18 @@ function App() {
           </a>
         </div>
       </nav>
-      <div className="h-[calc(100vh_-_--spacing(12))] p-4 flex flex-col flex-nowrap lg:flex-row">
-        <div className="flex-1 flex flex-col">
+      <div className="h-[calc(100vh_-_--spacing(12))] p-4 max-w-dvw overflow-hidden flex flex-col flex-nowrap lg:flex-row">
+        <div className="flex-1 flex flex-col space-y-2 w-full lg:w-1/2 h-1/2 lg:h-full">
           <Legend />
-          <div className="overflow-y-scroll ">
-            <Table
-              datasets={datasets}
-              onChangeDatasets={setDatasets}
-              onSelectRow={handleSelectRow}
-              onToggleShowOverlay={() => setShowOverlay(!showOverlay)}
-            />
-          </div>
+          <Table
+            datasets={datasets}
+            onChangeDatasets={setDatasets}
+            onSelectRow={handleSelectRow}
+            onToggleShowOverlay={() => setShowOverlay(!showOverlay)}
+          />
         </div>
 
-        <div className="flex-1 relative">
+        <div className="flex-1 relative w-full lg:w-1/2 h-1/2 lg:h-full">
           <ImageOverlay
             backgroundImage={backgroundImage}
             overlayImage={overlayImage}
