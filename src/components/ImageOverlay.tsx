@@ -67,7 +67,7 @@ export function ImageOverlay({
           src={backgroundImage}
         />
       ) : null}
-      {imagesLoaded && showOverlay ? (
+      {imagesLoaded ? (
         <img
           className={classNames(
             'absolute h-full w-full top-0 left-0 object-contain transition-opacity duration-50',
