@@ -18,7 +18,7 @@ export interface Dataset {
   backgroundImage: string
   overlayImage: string
   date: string
-  rank: string
+  rank: number
   qc: string
 }
 

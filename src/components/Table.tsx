@@ -11,8 +11,8 @@ import {
 } from '@tanstack/react-table'
 
 import { Dataset } from 'App'
-import { replace } from 'util/replace'
-import ColumnSelect from './ColumnSelect'
+import { replaceDataset } from 'util/replace'
+import ColumnSelect from 'components/ColumnSelect'
 
 const defaultColumns: ColumnDef<Dataset>[] = [
   {
@@ -110,8 +110,11 @@ export function Table({
   const tbodyRef = useRef<HTMLTableSectionElement>(null)
 
   const cycleQc = (cmdline: string) => {
-    const idx = datasets.findIndex((d) => d.cmdline === cmdline)
-    const dataset = datasets[idx]
+    const dataset = datasets.find((d) => d.cmdline === cmdline)
+    if (!dataset) {
+      console.error(`Dataset not found: ${cmdline}`)
+      return
+    }
 
     let nextQc
     switch (dataset.qc) {
@@ -132,8 +135,20 @@ export function Table({
         break
     }
 
-    onChangeDatasets(replace(datasets, idx, { ...dataset, qc: nextQc }))
+    onChangeDatasets(replaceDataset(datasets, cmdline, { qc: nextQc }))
   }
+
+  const updateRank = useCallback(
+    (cmdline: string, rank: number) => {
+      if (!(rank >= 0 && rank <= 9)) {
+        console.error(`Invalid rank set for ${cmdline}: ${rank}`)
+        return
+      }
+
+      onChangeDatasets(replaceDataset(datasets, cmdline, { rank }))
+    },
+    [datasets, onChangeDatasets],
+  )
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLTableRowElement>) => {
@@ -147,6 +162,10 @@ export function Table({
       const currentRow = tbodyRef.current.children.namedItem(row.id)
 
       let sibling
+
+      if (event.key.match(/\d/)) {
+        updateRank(row.id, parseInt(event.key))
+      }
 
       switch (event.key) {
         case 'f':
