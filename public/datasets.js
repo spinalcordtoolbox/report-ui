@@ -15,6 +15,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/t2/sct_deepseg_sc/2025_02_27_120633.252759/background_img.png",
     "overlayImage": "data/sct_example_data/t2/sct_deepseg_sc/2025_02_27_120633.252759/overlay_img.png",
     "date": "2025-02-27 12:06:33",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -29,6 +30,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/t2/sct_get_centerline/2025_02_27_120638.436171/background_img.png",
     "overlayImage": "data/sct_example_data/t2/sct_get_centerline/2025_02_27_120638.436171/overlay_img.png",
     "date": "2025-02-27 12:06:38",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -43,6 +45,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/t2/sct_get_centerline/2025_02_27_120642.986204/background_img.png",
     "overlayImage": "data/sct_example_data/t2/sct_get_centerline/2025_02_27_120642.986204/overlay_img.png",
     "date": "2025-02-27 12:06:42",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -57,6 +60,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/t2/sct_label_vertebrae/2025_02_27_120812.002463/background_img.png",
     "overlayImage": "data/sct_example_data/t2/sct_label_vertebrae/2025_02_27_120812.002463/overlay_img.png",
     "date": "2025-02-27 12:08:12",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -71,6 +75,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/t2/sct_register_to_template/2025_02_27_121216.227497/background_img.png",
     "overlayImage": "data/sct_example_data/t2/sct_register_to_template/2025_02_27_121216.227497/overlay_img.png",
     "date": "2025-02-27 12:12:16",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -85,6 +90,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/t2/sct_detect_pmj/2025_02_27_121333.442699/background_img.png",
     "overlayImage": "data/sct_example_data/t2/sct_detect_pmj/2025_02_27_121333.442699/overlay_img.png",
     "date": "2025-02-27 12:13:33",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -99,6 +105,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/t2/sct_process_segmentation/2025_02_27_121342.376639/background_img.png",
     "overlayImage": "data/sct_example_data/t2/sct_process_segmentation/2025_02_27_121342.376639/overlay_img.png",
     "date": "2025-02-27 12:13:42",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -113,6 +120,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/t2s/sct_deepseg_sc/2025_02_27_121426.809659/background_img.png",
     "overlayImage": "data/sct_example_data/t2s/sct_deepseg_sc/2025_02_27_121426.809659/overlay_img.png",
     "date": "2025-02-27 12:14:26",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -127,6 +135,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/t2s/sct_deepseg_gm/2025_02_27_121448.979009/background_img.png",
     "overlayImage": "data/sct_example_data/t2s/sct_deepseg_gm/2025_02_27_121448.979009/overlay_img.png",
     "date": "2025-02-27 12:14:48",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -141,6 +150,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/mt/sct_deepseg_sc/2025_02_27_122315.977388/background_img.png",
     "overlayImage": "data/sct_example_data/mt/sct_deepseg_sc/2025_02_27_122315.977388/overlay_img.png",
     "date": "2025-02-27 12:23:15",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -155,6 +165,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/mt/sct_register_multimodal/2025_02_27_122327.697792/background_img.png",
     "overlayImage": "data/sct_example_data/mt/sct_register_multimodal/2025_02_27_122327.697792/overlay_img.png",
     "date": "2025-02-27 12:23:27",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -169,6 +180,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/mt/sct_warp_template/2025_02_27_122440.754817/background_img.png",
     "overlayImage": "data/sct_example_data/mt/sct_warp_template/2025_02_27_122440.754817/overlay_img.png",
     "date": "2025-02-27 12:24:40",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -183,6 +195,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/mt/sct_register_multimodal/2025_02_27_122453.194753/background_img.png",
     "overlayImage": "data/sct_example_data/mt/sct_register_multimodal/2025_02_27_122453.194753/overlay_img.png",
     "date": "2025-02-27 12:24:53",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -197,6 +210,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/dmri/sct_deepseg_sc/2025_02_27_122604.164590/background_img.png",
     "overlayImage": "data/sct_example_data/dmri/sct_deepseg_sc/2025_02_27_122604.164590/overlay_img.png",
     "date": "2025-02-27 12:26:04",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -211,6 +225,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/dmri/sct_dmri_moco/2025_02_27_122611.097215/background_img.gif",
     "overlayImage": "data/sct_example_data/dmri/sct_dmri_moco/2025_02_27_122611.097215/overlay_img.gif",
     "date": "2025-02-27 12:26:11",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -225,6 +240,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/dmri/sct_register_multimodal/2025_02_27_122653.360730/background_img.png",
     "overlayImage": "data/sct_example_data/dmri/sct_register_multimodal/2025_02_27_122653.360730/overlay_img.png",
     "date": "2025-02-27 12:26:53",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -239,6 +255,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/dmri/sct_warp_template/2025_02_27_122737.283310/background_img.png",
     "overlayImage": "data/sct_example_data/dmri/sct_warp_template/2025_02_27_122737.283310/overlay_img.png",
     "date": "2025-02-27 12:27:37",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -253,6 +270,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/fmri/sct_fmri_moco/2025_02_27_122934.777942/background_img.gif",
     "overlayImage": "data/sct_example_data/fmri/sct_fmri_moco/2025_02_27_122934.777942/overlay_img.gif",
     "date": "2025-02-27 12:29:34",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -267,6 +285,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/fmri/sct_register_multimodal/2025_02_27_123440.162169/background_img.png",
     "overlayImage": "data/sct_example_data/fmri/sct_register_multimodal/2025_02_27_123440.162169/overlay_img.png",
     "date": "2025-02-27 12:34:40",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -281,6 +300,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_example_data/t2/sct_deepseg_sc/2025_03_03_103825.981848/background_img.png",
     "overlayImage": "data/sct_example_data/t2/sct_deepseg_sc/2025_03_03_103825.981848/overlay_img.png",
     "date": "2025-03-03 10:38:25",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }, {
@@ -295,6 +315,7 @@ window.SCT_QC_DATASETS = [
     "backgroundImage": "data/sct_testing_data/t2/sct_deepseg_sc/2025_03_03_104116.186119/background_img.png",
     "overlayImage": "data/sct_testing_data/t2/sct_deepseg_sc/2025_03_03_104116.186119/overlay_img.png",
     "date": "2025-03-03 10:41:16",
+    "path": "/path/to/datasets",
     "rank": "",
     "qc": ""
   }
