@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import classNames from 'classnames'
 
 import logoUrl from 'assets/sct_logo.png'
 import { Table } from 'components/Table'
@@ -38,14 +39,16 @@ function App() {
     INITIAL_DATASETS.map(cleanDataset),
   )
 
+  const [selected, setSelected] = useState<Dataset>()
+
   const [backgroundImage, setBackgroundImage] = useState('')
   const [overlayImage, setOverlayImage] = useState('')
-
   const [showOverlay, setShowOverlay] = useState(true)
 
   const handleSelectRow = useCallback(
     (cmdline: string) => {
       const dataset = datasets.find((r) => r.cmdline == cmdline)
+      setSelected(dataset)
       setBackgroundImage(dataset?.backgroundImage ?? '')
       setOverlayImage(dataset?.overlayImage ?? '')
     },
@@ -72,23 +75,61 @@ function App() {
           </a>
         </div>
       </nav>
-      <div className="h-[calc(100vh_-_--spacing(12))] p-4 max-w-dvw overflow-hidden flex flex-col flex-nowrap lg:flex-row">
-        <div className="flex-1 flex flex-col space-y-2 w-full lg:w-1/2 h-1/2 lg:h-full">
+      <div
+        className={classNames(
+          'h-[calc(100vh_-_--spacing(12))] max-h-[1024px] p-4 max-w-dvw overflow-hidden',
+          'flex flex-col flex-nowrap lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4',
+        )}
+      >
+        <div className="flex-1 flex flex-col space-y-2 w-full lg:w-5/12 h-1/2 lg:h-full">
           <Legend />
           <Table
             datasets={datasets}
             onChangeDatasets={setDatasets}
             onSelectRow={handleSelectRow}
-            onToggleShowOverlay={() => setShowOverlay(!showOverlay)}
+            onToggleShowOverlay={() => setShowOverlay((o) => !o)}
           />
         </div>
 
-        <div className="flex-1 relative w-full lg:w-1/2 h-1/2 lg:h-full">
-          <ImageOverlay
-            backgroundImage={backgroundImage}
-            overlayImage={overlayImage}
-            showOverlay={showOverlay}
-          />
+        <div
+          className={classNames(
+            'flex-1 w-full lg:w-7/12 h-1/2 lg:h-full',
+            'flex flex-col justify-center items-center flex-nowrap space-y-4',
+          )}
+        >
+          <div className="relative w-full h-[calc(100%_-_--spacing(24))] lg:mt-24">
+            <ImageOverlay
+              backgroundImage={backgroundImage}
+              overlayImage={overlayImage}
+              showOverlay={showOverlay}
+            />
+          </div>
+          {selected ? (
+            <>
+              <button
+                onClick={() => setShowOverlay((o) => !o)}
+                className={classNames(
+                  'hidden lg:block h-10 w-fit border-gray-500 border-1 rounded-sm mb-1 self-start',
+                  'cursor-pointer hover:bg-gray-100/50 active:bg-gray-100 transition-colors',
+                )}
+              >
+                <div className="h-full w-fit py-1 px-4 flex flex-row flex-nowrap items-center space-x-2">
+                  <span className="leading-0">Toggle overlay</span>
+                  <img className="h-full" src="/keyright.png" />
+                </div>
+              </button>
+              <div className="w-full flex flex-col overflow-y-scroll overflow-x-clip p-2 border-gray-500 rounded-sm border-1">
+                <div className="w-full space-x-2 break-words">
+                  <span className="font-bold">Command:</span>
+                  <span>{selected.cmdline}</span>
+                </div>
+                <span>
+                  <span className="font-bold">SCT version:</span>
+                  {selected.sctVersion}
+                </span>
+              </div>
+            </>
+          ) : null}
         </div>
       </div>
     </>
