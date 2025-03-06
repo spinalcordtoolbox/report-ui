@@ -78,11 +78,11 @@ function App() {
       </nav>
       <div
         className={classNames(
-          'h-[calc(100vh_-_--spacing(12))] max-h-[1024px] p-4 max-w-dvw overflow-hidden',
-          'flex flex-col flex-nowrap lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4',
+          'h-[calc(100vh_-_--spacing(12))] lg:max-h-[1024px] p-4 max-w-dvw overflow-hidden',
+          'flex flex-col flex-nowrap lg:flex-row lg:space-y-0 lg:space-x-4',
         )}
       >
-        <div className="flex-1 flex flex-col space-y-2 w-full lg:w-5/12 h-1/2 lg:h-full">
+        <div className="flex flex-col space-y-2 w-full lg:w-5/12 h-1/2 lg:h-full">
           <Legend />
           <Table
             datasets={datasets}
@@ -94,21 +94,24 @@ function App() {
 
         <div
           className={classNames(
-            'flex-1 w-full lg:w-7/12 h-1/2 lg:h-full',
-            'flex flex-col justify-center items-center flex-nowrap space-y-4',
+            'w-full lg:w-7/12 h-1/2 lg:h-full p-4',
+            'flex flex-col justify-between items-center flex-nowrap space-y-4',
           )}
         >
-          <div className="relative w-full h-[calc(100%_-_--spacing(24))]">
+          <div className="w-full h-10 hidden lg:block min-h-0"></div>
+          <div className="w-full max-h-[80%] relative min-h-0">
             <ImageOverlay
               backgroundImage={backgroundImage}
               overlayImage={overlayImage}
               showOverlay={showOverlay}
             />
           </div>
-          <ImageInfo
-            selected={selected}
-            onToggleShowOverlay={() => setShowOverlay((o) => !o)}
-          />
+          <div className="w-full min-h-0">
+            <ImageInfo
+              selected={selected}
+              onToggleShowOverlay={() => setShowOverlay((o) => !o)}
+            />
+          </div>
         </div>
       </div>
     </>

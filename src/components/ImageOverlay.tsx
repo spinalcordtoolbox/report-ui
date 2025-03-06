@@ -60,12 +60,9 @@ export function ImageOverlay({
   }, [backgroundImage, overlayImage])
 
   return (
-    <div className="absolute top-4 left-4 right-4 bottom-4">
+    <>
       {imagesLoaded ? (
-        <img
-          className="absolute h-full w-full top-0 left-0 object-contain"
-          src={backgroundImage}
-        />
+        <img className="w-full h-full object-contain" src={backgroundImage} />
       ) : null}
       {imagesLoaded ? (
         <img
@@ -76,6 +73,6 @@ export function ImageOverlay({
           src={overlayImage}
         />
       ) : null}
-    </div>
+    </>
   )
 }
