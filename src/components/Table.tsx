@@ -295,9 +295,9 @@ export function Table({
                 {row.getVisibleCells().map((cell, i) => (
                   <td
                     key={cell.id}
-                    className="p-2 border-gray-200 border-1 text-wrap overflow-hidden min-w-4"
+                    className="p-2 border-gray-200 border-1 text-wrap overflow-hidden min-w-4 break-words"
                     style={{
-                      maxWidth: columnSizes[i],
+                      maxWidth: Math.min(columnSizes[i], 400) || 400,
                     }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
