@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 
 function preloadImage(src: string) {
@@ -59,10 +59,19 @@ export function ImageOverlay({
     }
   }, [backgroundImage, overlayImage])
 
+  const bgCleanedPath = useMemo(
+    () => backgroundImage.replace(/^\//g, ''),
+    [backgroundImage],
+  )
+  const overlayCleanedPath = useMemo(
+    () => overlayImage.replace(/^\//g, ''),
+    [overlayImage],
+  )
+
   return (
     <>
       {imagesLoaded ? (
-        <img className="w-full h-full object-contain" src={backgroundImage} />
+        <img className="w-full h-full object-contain" src={bgCleanedPath} />
       ) : null}
       {imagesLoaded ? (
         <img
@@ -70,7 +79,7 @@ export function ImageOverlay({
             'absolute h-full w-full top-0 left-0 object-contain transition-opacity duration-50',
             showOverlay ? 'opacity-100' : 'opacity-0',
           )}
-          src={overlayImage}
+          src={overlayCleanedPath}
         />
       ) : null}
     </>

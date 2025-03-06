@@ -19,7 +19,7 @@ export function ImageInfo({
       >
         <div className="h-full w-fit py-1 px-4 flex flex-row flex-nowrap items-center space-x-2">
           <span className="leading-0">Toggle overlay</span>
-          <img className="h-full" src="/keyright.png" />
+          <img className="h-full" src="keyright.png" />
         </div>
       </button>
       <div className="w-full flex flex-col overflow-y-scroll overflow-x-clip p-2 border-gray-500 rounded-sm border-1">
