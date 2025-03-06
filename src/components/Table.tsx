@@ -225,15 +225,15 @@ export function Table({
         onChange={() => {}}
         columns={dataTable.getAllLeafColumns()}
       />
-      <div className="overflow-y-scroll max-w-full overflow-x-scroll">
-        <table className="border-1 border-gray-200 rounded-sm text-[10px] border-spacing-0 border-separate flex-1">
-          <thead className="bg-gray-300 rounded-sm">
+      <div className="overflow-y-scroll w-full overflow-x-scroll">
+        <div className="table min-w-full border-1 border-gray-200 rounded-sm text-[10px] border-spacing-0 border-separate flex-1">
+          <div className="table-header-group bg-gray-300 rounded-sm">
             {dataTable.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <div className="table-row" key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th
+                  <div
                     key={header.id}
-                    className="text-left"
+                    className="table-cell text-left"
                     style={{
                       width: header.getSize(),
                     }}
@@ -275,38 +275,38 @@ export function Table({
                         </div>
                       </div>
                     </div>
-                  </th>
+                  </div>
                 ))}
-              </tr>
+              </div>
             ))}
-          </thead>
-          <tbody ref={tbodyRef}>
+          </div>
+          <div ref={tbodyRef} className="table-row-group">
             {dataTable.getRowModel().rows.map((row, i) => (
-              <tr
+              <div
                 key={row.id}
                 id={row.id}
                 tabIndex={0}
                 onKeyDown={handleKeyDown}
                 onFocus={() => onSelectRow(row.id)}
                 onClick={() => onSelectRow(row.id)}
-                className="focus:bg-gray-50"
+                className="table-row focus:bg-gray-50"
                 autoFocus={i === 0}
               >
                 {row.getVisibleCells().map((cell, i) => (
-                  <td
+                  <div
                     key={cell.id}
-                    className="p-2 border-gray-200 border-1 text-wrap overflow-hidden min-w-4 break-words"
+                    className="table-cell p-2 border-gray-200 border-1 text-wrap overflow-hidden min-w-4 break-words"
                     style={{
                       maxWidth: Math.min(columnSizes[i], 400) || 400,
                     }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
+                  </div>
                 ))}
-              </tr>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
     </>
   )
