@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import classNames from 'classnames'
-import { flexRender } from '@tanstack/react-table'
+import { flexRender, Updater } from '@tanstack/react-table'
 import {
   ColumnDef,
   ColumnOrderState,
@@ -55,7 +55,12 @@ const defaultColumns: ColumnDef<Dataset>[] = [
     accessorKey: 'qc',
     header: 'QC',
   },
+  { accessorKey: 'position', enableHiding: true },
 ]
+
+interface TableData extends Dataset {
+  position: number
+}
 
 export type PropTypes = {
   datasets: Dataset[]
@@ -85,16 +90,36 @@ export function Table({
   })
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([])
   const [sorting, setSorting] = useState<SortingState>([])
+  const [rowOrder, setRowOrder] = useState<{ [key: string]: number }>({})
+
+  const sortByColumns = useCallback(
+    (sortingState: Updater<SortingState>) => {
+      setSorting(sortingState)
+    },
+    [setSorting],
+  )
+
+  const tableData: TableData[] = useMemo(
+    () =>
+      datasets.map((dataset) => ({
+        ...dataset,
+        position: rowOrder[dataset.cmdline],
+      })),
+    [datasets, rowOrder],
+  )
 
   const dataTable = useReactTable<Dataset>({
-    data: datasets,
+    data: tableData,
     columns,
     defaultColumn: {
       minSize: 20,
       maxSize: 400,
     },
     state: {
-      columnVisibility,
+      columnVisibility: {
+        ...columnVisibility,
+        position: false,
+      },
       columnOrder,
       sorting,
     },
@@ -103,11 +128,34 @@ export function Table({
     getSortedRowModel: getSortedRowModel(),
     onColumnVisibilityChange: setColumnVisibility as any,
     onColumnOrderChange: setColumnOrder,
-    onSortingChange: setSorting,
+    onSortingChange: sortByColumns,
     getRowId: (row) => row.cmdline,
   })
 
+  const { rows } = dataTable.getRowModel()
+
+  useEffect(() => {
+    const newRowOrder = rows.reduce(
+      (memo, row, index) => ({
+        ...memo,
+        [row.id]: index,
+      }),
+      {},
+    )
+
+    if (JSON.stringify(rowOrder) === JSON.stringify(newRowOrder)) return
+
+    setRowOrder(newRowOrder)
+  }, [rows, rowOrder])
+
   const tbodyRef = useRef<HTMLTableSectionElement>(null)
+
+  // freeze order when modifying data to prevent losing one's place on the list
+  const changeDatasets = useCallback((replaceDatasets: Dataset[]) => {
+    setSorting([{ id: 'position', desc: false }])
+
+    onChangeDatasets(replaceDatasets)
+  }, [])
 
   const cycleQc = (cmdline: string) => {
     const dataset = datasets.find((d) => d.cmdline === cmdline)
@@ -135,7 +183,7 @@ export function Table({
         break
     }
 
-    onChangeDatasets(replaceDataset(datasets, cmdline, { qc: nextQc }))
+    changeDatasets(replaceDataset(datasets, cmdline, { qc: nextQc }))
   }
 
   const updateRank = useCallback(
@@ -145,9 +193,9 @@ export function Table({
         return
       }
 
-      onChangeDatasets(replaceDataset(datasets, cmdline, { rank }))
+      changeDatasets(replaceDataset(datasets, cmdline, { rank }))
     },
-    [datasets, onChangeDatasets],
+    [datasets, changeDatasets],
   )
 
   const handleKeyDown = useCallback(
@@ -281,7 +329,7 @@ export function Table({
             ))}
           </div>
           <div ref={tbodyRef} className="table-row-group">
-            {dataTable.getRowModel().rows.map((row, i) => (
+            {rows.map((row, i) => (
               <div
                 key={row.id}
                 id={row.id}
