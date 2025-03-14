@@ -98,15 +98,15 @@ function App() {
             'flex flex-col justify-between items-center flex-nowrap space-y-4',
           )}
         >
-          <div className="w-full h-10 hidden lg:block min-h-0"></div>
-          <div className="w-full max-h-[80%] relative min-h-0">
+          <div className="w-full h-40 hidden lg:block min-h-0"></div>
+          <div className="w-full max-h-[calc(100%_-_--spacing(80))] relative min-h-0">
             <ImageOverlay
               backgroundImage={backgroundImage}
               overlayImage={overlayImage}
               showOverlay={showOverlay}
             />
           </div>
-          <div className="w-full min-h-0">
+          <div className="w-full h-40 overflow-hidden flex flex-col">
             <ImageInfo
               selected={selected}
               onToggleShowOverlay={() => setShowOverlay((o) => !o)}
