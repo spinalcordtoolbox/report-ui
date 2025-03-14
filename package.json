@@ -20,6 +20,7 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@typescript-eslint/parser": "^5.0.1",
+    "@uidotdev/usehooks": "^2.4.1",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "classnames": "^2.5.1",
     "eslint": "^8.52.0",

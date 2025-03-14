@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import classNames from 'classnames'
-import { flexRender, Updater } from '@tanstack/react-table'
+import { flexRender, getFilteredRowModel, Updater } from '@tanstack/react-table'
 import {
   ColumnDef,
   ColumnOrderState,
@@ -9,10 +9,12 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import { useDebounce } from '@uidotdev/usehooks'
 
 import { Dataset } from 'App'
 import { replaceDataset } from 'util/replace'
 import ColumnSelect from 'components/ColumnSelect'
+import SearchBox from 'components/SearchBox'
 
 const defaultColumns: ColumnDef<Dataset>[] = [
   {
@@ -91,6 +93,7 @@ export function Table({
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([])
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowOrder, setRowOrder] = useState<{ [key: string]: number }>({})
+  const [rowFilter, setRowFilter] = useState('')
 
   const sortByColumns = useCallback(
     (sortingState: Updater<SortingState>) => {
@@ -122,6 +125,7 @@ export function Table({
       },
       columnOrder,
       sorting,
+      globalFilter: rowFilter,
     },
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
@@ -130,6 +134,8 @@ export function Table({
     onColumnOrderChange: setColumnOrder,
     onSortingChange: sortByColumns,
     getRowId: (row) => row.cmdline,
+    getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: 'includesString',
   })
 
   const { rows } = dataTable.getRowModel()
@@ -267,12 +273,22 @@ export function Table({
     [leafColumns],
   )
 
+  const [searchString, setSearchString] = useState('')
+  const steadySearchString = useDebounce(searchString, 300)
+
+  useEffect(() => {
+    setRowFilter(steadySearchString)
+  }, [steadySearchString])
+
   return (
     <>
-      <ColumnSelect
-        onChange={() => {}}
-        columns={dataTable.getAllLeafColumns()}
-      />
+      <div className="flex flex-row space-between">
+        <ColumnSelect
+          onChange={() => {}}
+          columns={dataTable.getAllLeafColumns()}
+        />
+        <SearchBox value={searchString} onChange={setSearchString} />
+      </div>
       <div className="overflow-y-scroll w-full overflow-x-scroll">
         <div className="table min-w-full border-1 border-gray-200 rounded-sm text-[10px] border-spacing-0 border-separate flex-1">
           <div className="table-header-group bg-gray-300 rounded-sm">
@@ -328,6 +344,13 @@ export function Table({
               </div>
             ))}
           </div>
+          {rows.length ? null : (
+            <div className="table-caption caption-bottom text-center p-2 opacity-80 text-sm">
+              {rowFilter.length
+                ? 'No results match that search'
+                : 'No data loaded'}
+            </div>
+          )}
           <div ref={tbodyRef} className="table-row-group">
             {rows.map((row, i) => (
               <div
