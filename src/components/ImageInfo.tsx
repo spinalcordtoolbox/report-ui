@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Dataset } from '../App'
+import { Dataset } from 'App'
 
 export function ImageInfo({
   selected,

@@ -15,7 +15,7 @@ import { Dataset } from 'App'
 import { replaceDataset } from 'util/replace'
 import ColumnSelect from 'components/ColumnSelect'
 import SearchBox from 'components/SearchBox'
-import Loading from './Loading'
+import Loading from 'components/Loading'
 
 const defaultColumns: ColumnDef<Dataset>[] = [
   {
