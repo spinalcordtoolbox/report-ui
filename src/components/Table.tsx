@@ -9,12 +9,13 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import { useDebounce } from '@uidotdev/usehooks'
+import { useDebounce, useLocalStorage } from '@uidotdev/usehooks'
 
 import { Dataset } from 'App'
 import { replaceDataset } from 'util/replace'
 import ColumnSelect from 'components/ColumnSelect'
 import SearchBox from 'components/SearchBox'
+import Loading from './Loading'
 
 const defaultColumns: ColumnDef<Dataset>[] = [
   {
@@ -64,6 +65,48 @@ interface TableData extends Dataset {
   position: number
 }
 
+type RowOrder = {
+  [key: string]: number
+}
+
+type RowFilter = string
+
+type ColumnVisibility = {
+  date: boolean
+  dataset: boolean
+  subject: boolean
+  path: boolean
+  inputFile: boolean
+  contrast: boolean
+  command: boolean
+  cmdline: boolean
+  rank: boolean
+  qc: boolean
+}
+
+interface LocalStorageType {
+  columnOrder: ColumnOrderState
+  columnVisibility: ColumnVisibility
+  sorting: SortingState
+  rowOrder: RowOrder
+  rowFilter: RowFilter
+}
+
+const DEFAULT_COLUMN_VISIBILITY: ColumnVisibility = {
+  date: true,
+  dataset: false,
+  subject: true,
+  path: false,
+  inputFile: true,
+  contrast: true,
+  command: true,
+  cmdline: false,
+  rank: false,
+  qc: true,
+}
+
+export const LOCAL_STORAGE_KEY = 'sct-qc-reports_table'
+
 export type PropTypes = {
   datasets: Dataset[]
   onChangeDatasets: (d: Dataset[]) => any
@@ -78,22 +121,73 @@ export function Table({
   onToggleShowOverlay,
 }: PropTypes) {
   const [columns] = useState([...defaultColumns])
-  const [columnVisibility, setColumnVisibility] = useState({
-    date: true,
-    dataset: false,
-    subject: true,
-    path: false,
-    inputFile: true,
-    contrast: true,
-    command: true,
-    cmdline: false,
-    rank: false,
-    qc: true,
-  })
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(
+    DEFAULT_COLUMN_VISIBILITY,
+  )
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([])
   const [sorting, setSorting] = useState<SortingState>([])
-  const [rowOrder, setRowOrder] = useState<{ [key: string]: number }>({})
-  const [rowFilter, setRowFilter] = useState('')
+  const [rowOrder, setRowOrder] = useState<RowOrder>({})
+  const [rowFilter, setRowFilter] = useState<RowFilter>('')
+
+  const [localStorage, setLocalStorage] = useLocalStorage<LocalStorageType>(
+    LOCAL_STORAGE_KEY,
+    {
+      columnOrder: [],
+      columnVisibility: DEFAULT_COLUMN_VISIBILITY,
+      sorting: [],
+      rowOrder: {},
+      rowFilter: '',
+    },
+  )
+
+  const [localStorageLoaded, setLocalStorageLoaded] = useState(false)
+
+  /* Once, at mount, load from local storage */
+  useEffect(() => {
+    const { columnOrder, columnVisibility, sorting, rowOrder, rowFilter } =
+      localStorage
+
+    setColumnOrder(columnOrder)
+    setSorting(sorting)
+    setRowOrder(rowOrder)
+    setRowFilter(rowFilter)
+    setColumnVisibility(columnVisibility)
+
+    setLocalStorageLoaded(true)
+  }, [])
+
+  /* Update local storage as effect for performance reasons */
+  useEffect(() => {
+    if (!localStorageLoaded) {
+      return
+    }
+
+    setLocalStorage({
+      columnOrder,
+      columnVisibility,
+      sorting,
+      rowOrder,
+      rowFilter,
+    })
+
+    /* on unmount, save once more */
+    return () => {
+      setLocalStorage({
+        columnOrder,
+        columnVisibility,
+        sorting,
+        rowOrder,
+        rowFilter,
+      })
+    }
+  }, [
+    localStorageLoaded,
+    columnOrder,
+    sorting,
+    rowOrder,
+    rowFilter,
+    columnVisibility,
+  ])
 
   const sortByColumns = useCallback(
     (sortingState: Updater<SortingState>) => {
@@ -279,6 +373,14 @@ export function Table({
   useEffect(() => {
     setRowFilter(steadySearchString)
   }, [steadySearchString])
+
+  if (!localStorageLoaded) {
+    return (
+      <div className="self-center mt-20">
+        <Loading />
+      </div>
+    )
+  }
 
   return (
     <>

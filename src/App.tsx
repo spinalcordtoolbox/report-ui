@@ -3,13 +3,16 @@ import { useLocalStorage } from '@uidotdev/usehooks'
 import classNames from 'classnames'
 
 import logoUrl from 'assets/sct_logo.png'
-import { Table } from 'components/Table'
+import {
+  Table,
+  LOCAL_STORAGE_KEY as TABLE_LOCAL_STORAGE_KEY,
+} from 'components/Table'
 import { ImageOverlay } from 'components/ImageOverlay'
 import Legend from 'components/Legend'
 import { ImageInfo } from 'components/ImageInfo'
 
 export interface Dataset {
-  cwd: string
+  path: string
   cmdline: string
   command: string
   sctVersion: string
@@ -36,9 +39,11 @@ function cleanDataset(dataset: Dataset): Dataset {
   }
 }
 
+const LOCAL_STORAGE_KEY = 'sct-qc-report_datasets'
+
 function App() {
   const [datasets, setDatasets] = useLocalStorage<Array<Dataset>>(
-    'sct-qc-report',
+    LOCAL_STORAGE_KEY,
     INITIAL_DATASETS.map(cleanDataset),
   )
 
