@@ -1,5 +1,5 @@
-import classNames from 'classnames'
 import { Dataset } from 'App'
+import Button from 'components/Button'
 
 export function ImageInfo({
   selected,
@@ -10,18 +10,10 @@ export function ImageInfo({
 }) {
   return selected ? (
     <>
-      <button
-        onClick={onToggleShowOverlay}
-        className={classNames(
-          'hidden lg:block h-10 w-fit border-gray-500 border-1 rounded-sm mb-1 self-start',
-          'cursor-pointer hover:bg-gray-100/50 active:bg-gray-100 transition-colors',
-        )}
-      >
-        <div className="h-full w-fit py-1 px-4 flex flex-row flex-nowrap items-center space-x-2">
-          <span className="leading-0">Toggle overlay</span>
-          <img className="h-full" src="keyright.png" />
-        </div>
-      </button>
+      <Button onClick={onToggleShowOverlay}>
+        <span className="leading-0">Toggle overlay</span>
+        <img className="h-full" src="keyright.png" />
+      </Button>
       <div className="w-full h-36 flex flex-col overflow-y-scroll overflow-x-clip p-2 border-gray-500 rounded-sm border-1">
         <div className="space-x-2">
           <span className="font-bold">SCT version:</span>

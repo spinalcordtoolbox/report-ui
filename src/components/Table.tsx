@@ -84,7 +84,7 @@ type ColumnVisibility = {
   qc: boolean
 }
 
-interface LocalStorageType {
+export interface TableState {
   columnOrder: ColumnOrderState
   columnVisibility: ColumnVisibility
   sorting: SortingState
@@ -109,6 +109,7 @@ export const LOCAL_STORAGE_KEY = 'sct-qc-reports_table'
 
 export type PropTypes = {
   datasets: Dataset[]
+  initialTableState: TableState | null
   onChangeDatasets: (d: Dataset[]) => any
   onSelectRow: (cmdline: string) => any
   onToggleShowOverlay: () => void
@@ -116,22 +117,32 @@ export type PropTypes = {
 
 export function Table({
   datasets,
+  initialTableState,
   onChangeDatasets,
   onSelectRow,
   onToggleShowOverlay,
 }: PropTypes) {
+  // for datatable type
   const [columns] = useState([...defaultColumns])
   const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(
-    DEFAULT_COLUMN_VISIBILITY,
+    initialTableState?.columnVisibility || DEFAULT_COLUMN_VISIBILITY,
   )
-  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([])
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [rowOrder, setRowOrder] = useState<RowOrder>({})
-  const [rowFilter, setRowFilter] = useState<RowFilter>('')
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
+    initialTableState?.columnOrder || [],
+  )
+  const [sorting, setSorting] = useState<SortingState>(
+    initialTableState?.sorting || [],
+  )
+  const [rowOrder, setRowOrder] = useState<RowOrder>(
+    initialTableState?.rowOrder || {},
+  )
+  const [rowFilter, setRowFilter] = useState<RowFilter>(
+    initialTableState?.rowFilter || '',
+  )
 
-  const [localStorage, setLocalStorage] = useLocalStorage<LocalStorageType>(
+  const [localStorage, setLocalStorage] = useLocalStorage<TableState>(
     LOCAL_STORAGE_KEY,
-    {
+    initialTableState || {
       columnOrder: [],
       columnVisibility: DEFAULT_COLUMN_VISIBILITY,
       sorting: [],
@@ -144,6 +155,13 @@ export function Table({
 
   /* Once, at mount, load from local storage */
   useEffect(() => {
+    /* Table state was loaded from file, overwrite */
+    if (initialTableState) {
+      setLocalStorage(initialTableState)
+      setLocalStorageLoaded(true)
+      return
+    }
+
     const { columnOrder, columnVisibility, sorting, rowOrder, rowFilter } =
       localStorage
 
@@ -374,7 +392,7 @@ export function Table({
     setRowFilter(steadySearchString)
   }, [steadySearchString])
 
-  if (!localStorageLoaded) {
+  if (!localStorageLoaded && !initialTableState) {
     return (
       <div className="self-center mt-20">
         <Loading />

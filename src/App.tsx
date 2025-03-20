@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import classNames from 'classnames'
 
@@ -6,10 +6,15 @@ import logoUrl from 'assets/sct_logo.png'
 import {
   Table,
   LOCAL_STORAGE_KEY as TABLE_LOCAL_STORAGE_KEY,
+  TableState,
 } from 'components/Table'
 import { ImageOverlay } from 'components/ImageOverlay'
 import Legend from 'components/Legend'
 import { ImageInfo } from 'components/ImageInfo'
+import Loading from 'components/Loading'
+import Button from 'components/Button'
+
+const LabelButton = Button<HTMLLabelElement>
 
 export interface Dataset {
   path: string
@@ -63,6 +68,96 @@ function App() {
     [datasets],
   )
 
+  const exportAll = useCallback(() => {
+    const tableState = localStorage.getItem(TABLE_LOCAL_STORAGE_KEY)
+    const tableJson = tableState ? JSON.parse(tableState) : null
+
+    const blob = new Blob(
+      [
+        JSON.stringify({
+          datasets,
+          ...{ ...(tableJson ? { tableState: tableJson } : {}) },
+        }),
+      ],
+      { type: 'application/json' },
+    )
+
+    const href = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = href
+    link.download = 'qc_report.json'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(href)
+  }, [datasets])
+
+  const [loading, setLoading] = useState(false)
+  const [initialTableState, setInitialTableState] = useState<TableState | null>(
+    null,
+  )
+
+  const loadFromFile = useCallback(
+    (parsedObject: { datasets: Dataset[]; tableState?: TableState }) => {
+      if (!parsedObject?.datasets) {
+        console.error(`Invalid file: ${parsedObject}`)
+        return
+      }
+
+      console.dir(parsedObject)
+
+      const { datasets } = parsedObject
+
+      setLoading(true)
+      setDatasets(datasets)
+
+      if (parsedObject.tableState) {
+        setInitialTableState(parsedObject.tableState)
+      }
+    },
+    [setLoading, setInitialTableState, setDatasets],
+  )
+
+  /* Force a render cycle before loading goes away, to force unmounts */
+  useEffect(() => {
+    console.dir(loading)
+    if (!loading) {
+      return
+    }
+    setLoading(false)
+  }, [loading])
+
+  const handleFileChosen = useCallback(
+    (file: File | undefined) => {
+      if (!file) {
+        return
+      }
+      const fileReader = new FileReader()
+      new Promise<ProgressEvent<FileReader>>((resolve, reject) => {
+        fileReader.onloadend = resolve
+        fileReader.onerror = (e: ProgressEvent<FileReader>) => {
+          reject(`File read failed: ${e}`)
+        }
+        fileReader.readAsText(file)
+      }).then((e) => {
+        const json = e.target?.result
+        if (typeof json !== 'string') {
+          console.error('Unsupported file type')
+          return
+        }
+
+        loadFromFile(JSON.parse(json))
+      })
+    },
+    [loadFromFile],
+  )
+
+  /* Force unmount of components while loading */
+  if (loading) {
+    console.dir('loading...')
+    return <Loading />
+  }
+
   return (
     <>
       <nav className="h-12 mr-auto ml-auto px-4 border-b-2 border-gray-200 bg-gray-100 ">
@@ -93,10 +188,28 @@ function App() {
           <Legend />
           <Table
             datasets={datasets}
+            initialTableState={initialTableState}
             onChangeDatasets={setDatasets}
             onSelectRow={handleSelectRow}
             onToggleShowOverlay={() => setShowOverlay((o) => !o)}
           />
+          <div className="flex flex-row items-center space-x-2">
+            <Button onClick={exportAll}>Save All</Button>
+            <input
+              id="fileUpload"
+              type="file"
+              accept=".json"
+              className="hidden"
+              onChange={(e) => handleFileChosen(e.target.files?.[0])}
+            />
+            <LabelButton
+              asComponent="label"
+              htmlFor="fileUpload"
+              className="cursor-pointer"
+            >
+              Upload all
+            </LabelButton>
+          </div>
         </div>
 
         <div
