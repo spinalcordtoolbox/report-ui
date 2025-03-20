@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { useLocalStorage } from '@uidotdev/usehooks'
 import classNames from 'classnames'
 
 import logoUrl from 'assets/sct_logo.png'
@@ -36,7 +37,8 @@ function cleanDataset(dataset: Dataset): Dataset {
 }
 
 function App() {
-  const [datasets, setDatasets] = useState<Array<Dataset>>(
+  const [datasets, setDatasets] = useLocalStorage<Array<Dataset>>(
+    'sct-qc-report',
     INITIAL_DATASETS.map(cleanDataset),
   )
 
