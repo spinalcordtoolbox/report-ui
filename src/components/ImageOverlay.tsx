@@ -30,11 +30,22 @@ export function ImageOverlay({
    * and using window.requestAnimationFrame to render them simultaneously
    */
   const [imagesLoaded, setImagesLoaded] = useState(false)
+  const bgCleanedPath = useMemo(
+    () => (backgroundImage ? backgroundImage.replace(/^\//g, '') : ''),
+    [backgroundImage],
+  )
+  const overlayCleanedPath = useMemo(
+    () => (overlayImage ? overlayImage.replace(/^\//g, '') : ''),
+    [overlayImage],
+  )
 
   useEffect(() => {
-    if (!backgroundImage && !overlayImage) return
+    if (!bgCleanedPath && !overlayCleanedPath) return
     // sync doesn't matter, just render
-    if (!backgroundImage.endsWith('.gif') && !overlayImage.endsWith('.gif')) {
+    if (
+      !bgCleanedPath.endsWith('.gif') &&
+      !overlayCleanedPath.endsWith('.gif')
+    ) {
       setImagesLoaded(true)
       return
     }
@@ -44,8 +55,8 @@ export function ImageOverlay({
     let isCancelled = false
 
     Promise.all([
-      preloadImage(backgroundImage),
-      preloadImage(overlayImage),
+      preloadImage(bgCleanedPath),
+      preloadImage(overlayCleanedPath),
     ]).then(() => {
       if (isCancelled) {
         return
@@ -57,16 +68,7 @@ export function ImageOverlay({
     return () => {
       isCancelled = true
     }
-  }, [backgroundImage, overlayImage])
-
-  const bgCleanedPath = useMemo(
-    () => backgroundImage.replace(/^\//g, ''),
-    [backgroundImage],
-  )
-  const overlayCleanedPath = useMemo(
-    () => overlayImage.replace(/^\//g, ''),
-    [overlayImage],
-  )
+  }, [bgCleanedPath, overlayCleanedPath])
 
   return (
     <>
