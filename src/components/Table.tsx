@@ -411,14 +411,14 @@ export function Table({
         <SearchBox value={searchString} onChange={setSearchString} />
       </div>
       <div className="overflow-y-scroll w-full overflow-x-scroll">
-        <div className="table min-w-full border-1 border-gray-200 rounded-sm text-[10px] border-spacing-0 border-separate flex-1">
-          <div className="table-header-group bg-gray-300 rounded-sm">
+        <table className="min-w-full border-1 border-gray-200 rounded-sm text-[10px] border-spacing-0 border-separate flex-1">
+          <thead className="rounded-sm">
             {dataTable.getHeaderGroups().map((headerGroup) => (
-              <div className="table-row" key={headerGroup.id}>
+              <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <div
+                  <th
                     key={header.id}
-                    className="table-cell text-left"
+                    className="sticky top-0 bg-gray-300 text-left"
                     style={{
                       width: header.getSize(),
                     }}
@@ -460,45 +460,45 @@ export function Table({
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </th>
                 ))}
-              </div>
+              </tr>
             ))}
-          </div>
+          </thead>
           {rows.length ? null : (
-            <div className="table-caption caption-bottom text-center p-2 opacity-80 text-sm">
+            <caption className="caption-bottom text-center p-2 opacity-80 text-sm">
               {rowFilter.length
                 ? 'No results match that search'
                 : 'No data loaded'}
-            </div>
+            </caption>
           )}
-          <div ref={tbodyRef} className="table-row-group">
+          <tbody ref={tbodyRef}>
             {rows.map((row, i) => (
-              <div
+              <tr
                 key={row.id}
                 id={row.id}
                 tabIndex={0}
                 onKeyDown={handleKeyDown}
                 onFocus={() => onSelectRow(row.id)}
                 onClick={() => onSelectRow(row.id)}
-                className="table-row focus:bg-gray-50"
+                className="focus:bg-gray-50"
                 autoFocus={i === 0}
               >
                 {row.getVisibleCells().map((cell, i) => (
-                  <div
+                  <td
                     key={cell.id}
-                    className="table-cell p-2 border-gray-200 border-1 text-wrap overflow-hidden min-w-4 break-words"
+                    className="p-2 border-gray-200 border-1 text-wrap overflow-hidden min-w-4 break-words"
                     style={{
                       maxWidth: Math.min(columnSizes[i], 400) || 400,
                     }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </div>
+                  </td>
                 ))}
-              </div>
+              </tr>
             ))}
-          </div>
-        </div>
+          </tbody>
+        </table>
       </div>
     </>
   )
