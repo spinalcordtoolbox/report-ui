@@ -10,7 +10,7 @@ export function ImageInfo({
 }) {
   return selected ? (
     <>
-      <Button onClick={onToggleShowOverlay}>
+      <Button onClick={onToggleShowOverlay} className="hidden lg:block">
         <span className="leading-0">Toggle overlay</span>
         <img className="h-full" src="keyright.png" />
       </Button>

@@ -25,7 +25,7 @@ export default function Button<T extends HTMLElement>({
       {...props}
       onClick={onClick || null}
       className={classNames(
-        'hidden lg:block h-10 w-fit border-gray-500 border-1 rounded-sm mb-1 self-start',
+        'h-10 w-fit border-gray-500 border-1 rounded-sm mb-1 self-start',
         'cursor-pointer hover:bg-gray-100/50 active:bg-gray-100 transition-colors',
         className,
       )}
