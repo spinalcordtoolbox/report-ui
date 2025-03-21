@@ -318,6 +318,7 @@ export function Table({
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLTableRowElement>) => {
+      event.preventDefault()
       event.stopPropagation()
       if (!tbodyRef.current) {
         return
