@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { saveAs } from 'file-saver'
 
 import { Dataset } from 'App'
 import Button from 'components/Button'
@@ -6,6 +7,7 @@ import {
   LOCAL_STORAGE_KEY as TABLE_LOCAL_STORAGE_KEY,
   TableState,
 } from 'components/Table'
+import { YamlExport } from 'components/YamlExport'
 
 const LabelButton = Button<HTMLLabelElement>
 
@@ -36,14 +38,7 @@ export function ImportExport({
       { type: 'application/json' },
     )
 
-    const href = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = href
-    link.download = 'qc_report.json'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(href)
+    saveAs(blob, 'qc_report.json')
   }, [datasets])
 
   const loadFromFile = useCallback(
@@ -89,8 +84,10 @@ export function ImportExport({
     },
     [loadFromFile],
   )
+
   return (
     <div className="flex flex-row items-center space-x-2">
+      <YamlExport datasets={datasets} />
       <Button onClick={exportAll}>Save All</Button>
       <input
         id="fileUpload"
