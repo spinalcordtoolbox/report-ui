@@ -53,8 +53,6 @@ export function ImportExport({
         return
       }
 
-      console.dir(parsedObject)
-
       const { datasets } = parsedObject
 
       onInitFileLoad()

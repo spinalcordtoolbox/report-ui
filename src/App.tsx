@@ -77,7 +77,6 @@ function App() {
 
   /* Force unmount of components while loading */
   if (loading) {
-    console.dir('loading...')
     return <Loading />
   }
 
