@@ -403,7 +403,7 @@ export function Table({
 
   return (
     <>
-      <div className="flex flex-row space-between">
+      <div className="w-full flex flex-row justify-between">
         <ColumnSelect
           onChange={() => {}}
           columns={dataTable.getAllLeafColumns()}
