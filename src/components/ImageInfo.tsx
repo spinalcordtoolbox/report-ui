@@ -12,7 +12,7 @@ export function ImageInfo({
     <>
       <Button onClick={onToggleShowOverlay} className="hidden lg:block">
         <span className="leading-0">Toggle overlay</span>
-        <img className="h-full" src="keyright.png" />
+        <img className="h-full" src="images/keyright.png" />
       </Button>
       <div className="w-full h-36 flex flex-col overflow-y-scroll overflow-x-clip p-2 border-gray-500 rounded-sm border-1">
         <div className="space-x-2">
