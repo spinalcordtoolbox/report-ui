@@ -26,7 +26,7 @@ export default function Legend() {
     <div className="flex flex-wrap space-x-2 text-sm text-gray-700">
       {KEYS.map(({ image, label }) => (
         <div key={image} className="h-8 flex flex-row items-center space-x-1">
-          <img src={`${image}`} className="h-full object-contain" />
+          <img src={`images/${image}`} className="h-full object-contain" />
           <span>{label}</span>
         </div>
       ))}
