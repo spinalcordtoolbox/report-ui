@@ -130,17 +130,17 @@ function App() {
         <div
           className={classNames(
             'w-full lg:w-7/12 h-1/2 lg:h-full p-4',
-            'flex flex-col items-center flex-nowrap space-y-4 relative',
+            'flex flex-col flex-nowrap space-y-4 relative',
           )}
         >
-          <div className="w-full h-[calc(100%_-_--spacing(40))] relative min-h-0">
+          <div className="w-full relative min-h-0">
             <ImageOverlay
               backgroundImage={backgroundImage}
               overlayImage={overlayImage}
               showOverlay={showOverlay}
             />
           </div>
-          <div className="absolute bottom-0 w-full px-4 h-40 overflow-hidden flex flex-col space-y-1 self-end justify-self-end">
+          <div className="w-full flex flex-col space-y-1">
             <ImageInfo
               selected={selected}
               onToggleShowOverlay={() => setShowOverlay((o) => !o)}

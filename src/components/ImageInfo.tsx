@@ -14,7 +14,7 @@ export function ImageInfo({
         <span className="leading-0">Toggle overlay</span>
         <img className="h-full" src="images/keyright.png" />
       </Button>
-      <div className="w-full h-36 flex flex-col overflow-y-scroll overflow-x-clip p-2 border-gray-500 rounded-sm border-1">
+      <div className="w-full flex flex-col overflow-y-scroll overflow-x-clip p-2 border-gray-500 rounded-sm border-1">
         <div className="space-x-2">
           <span className="font-bold">SCT version:</span>
           <span>{selected.sctVersion}</span>
