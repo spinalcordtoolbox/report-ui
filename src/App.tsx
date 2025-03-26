@@ -10,6 +10,10 @@ import { ImageInfo } from 'components/ImageInfo'
 import Loading from 'components/Loading'
 import { ImportExport } from 'components/ImportExport'
 
+if (import.meta.env.MODE === 'development') {
+  await import('../sample/datasets.js' as any)
+}
+
 export interface Dataset {
   path: string
   cmdline: string
