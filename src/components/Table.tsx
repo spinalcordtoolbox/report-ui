@@ -481,7 +481,7 @@ export function Table({
                 onKeyDown={handleKeyDown}
                 onFocus={() => onSelectRow(row.id)}
                 onClick={() => onSelectRow(row.id)}
-                className="focus:bg-gray-50"
+                className="focus:bg-gray-300"
                 autoFocus={i === 0}
               >
                 {row.getVisibleCells().map((cell, i) => (
