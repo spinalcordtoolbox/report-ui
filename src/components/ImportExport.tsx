@@ -3,11 +3,9 @@ import { saveAs } from 'file-saver'
 
 import { Dataset } from 'App'
 import Button from 'components/Button'
-import {
-  LOCAL_STORAGE_KEY as TABLE_LOCAL_STORAGE_KEY,
-  TableState,
-} from 'components/Table'
+import { TableState } from 'components/Table'
 import { YamlExport } from 'components/YamlExport'
+import { getConstants } from 'util/constants'
 
 const LabelButton = Button<HTMLLabelElement>
 
@@ -25,7 +23,9 @@ export function ImportExport({
   onSetInitialTableState,
 }: PropTypes) {
   const exportAll = useCallback(() => {
-    const tableState = localStorage.getItem(TABLE_LOCAL_STORAGE_KEY)
+    const tableState = localStorage.getItem(
+      getConstants().TABLE_LOCAL_STORAGE_KEY,
+    )
     const tableJson = tableState ? JSON.parse(tableState) : null
 
     const blob = new Blob(

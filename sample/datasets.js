@@ -1,3 +1,4 @@
+window.SCT_QC_UUID = 'd4ac2e7d-74c7-438e-a544-9c71023730a5';
 window.SCT_QC_DATASETS = [
   {
     "path": "/path/to/spinalcordtoolbox/data/sct_example_data/t2",

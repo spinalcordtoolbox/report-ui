@@ -9,6 +9,7 @@ import Legend from 'components/Legend'
 import { ImageInfo } from 'components/ImageInfo'
 import Loading from 'components/Loading'
 import { ImportExport } from 'components/ImportExport'
+import { getConstants } from 'util/constants'
 
 if (import.meta.env.MODE === 'development') {
   await import('../sample/datasets.js' as any)
@@ -31,9 +32,6 @@ export interface Dataset {
   qc: string
 }
 
-// ugly way to convince Typescript to accept our hacky global
-const INITIAL_DATASETS = (window as any).SCT_QC_DATASETS as Array<Dataset>
-
 function cleanDataset(dataset: Dataset): Dataset {
   return {
     ...dataset,
@@ -42,12 +40,10 @@ function cleanDataset(dataset: Dataset): Dataset {
   }
 }
 
-const LOCAL_STORAGE_KEY = 'sct-qc-report_datasets'
-
 function App() {
   const [datasets, setDatasets] = useLocalStorage<Array<Dataset>>(
-    LOCAL_STORAGE_KEY,
-    INITIAL_DATASETS.map(cleanDataset),
+    getConstants().DATASETS_LOCAL_STORAGE_KEY,
+    getConstants().INITIAL_DATASETS.map(cleanDataset),
   )
 
   const [selected, setSelected] = useState<Dataset>()

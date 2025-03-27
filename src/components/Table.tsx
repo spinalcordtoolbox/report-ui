@@ -12,6 +12,7 @@ import {
 import { useDebounce, useLocalStorage } from '@uidotdev/usehooks'
 
 import { Dataset } from 'App'
+import { getConstants } from 'util/constants'
 import { replaceDataset } from 'util/replace'
 import ColumnSelect from 'components/ColumnSelect'
 import SearchBox from 'components/SearchBox'
@@ -105,8 +106,6 @@ const DEFAULT_COLUMN_VISIBILITY: ColumnVisibility = {
   qc: true,
 }
 
-export const LOCAL_STORAGE_KEY = 'sct-qc-reports_table'
-
 export type PropTypes = {
   datasets: Dataset[]
   initialTableState: TableState | null
@@ -141,7 +140,7 @@ export function Table({
   )
 
   const [localStorage, setLocalStorage] = useLocalStorage<TableState>(
-    LOCAL_STORAGE_KEY,
+    getConstants().TABLE_LOCAL_STORAGE_KEY,
     initialTableState || {
       columnOrder: [],
       columnVisibility: DEFAULT_COLUMN_VISIBILITY,
