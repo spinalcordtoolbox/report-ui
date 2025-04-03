@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 
+import { FitMode } from '@/ImageDisplay'
+
 function preloadImage(src: string) {
   return new Promise((resolve, reject) => {
     const img = new Image()
@@ -25,8 +27,10 @@ export function ImageOverlay({
   backgroundImage,
   overlayImage,
   showOverlay,
+  fitMode,
 }: PropTypes & {
   className: string
+  fitMode: FitMode
 }) {
   /*
    * Do some imperative trickery to try to synchronize gifs.
@@ -75,15 +79,29 @@ export function ImageOverlay({
     }
   }, [bgCleanedPath, overlayCleanedPath])
 
+  const fitToHeight = fitMode === 'fit'
+
   return (
-    <div className={classNames(className, 'relative min-h-0')}>
+    <div
+      className={classNames(className, 'relative min-h-0', {
+        'overflow-y-auto': !fitToHeight,
+      })}
+    >
       {imagesLoaded ? (
         <>
-          <img className="w-full h-full object-contain" src={bgCleanedPath} />
+          <img
+            className={classNames('w-full', {
+              'h-full object-contain': fitToHeight,
+            })}
+            src={bgCleanedPath}
+          />
           <img
             className={classNames(
-              'absolute h-full w-full top-0 left-0 object-contain transition-opacity duration-50',
+              'absolute w-full top-0 left-0 transition-opacity duration-50',
               showOverlay ? 'opacity-100' : 'opacity-0',
+              {
+                'h-full object-contain': fitToHeight,
+              },
             )}
             src={overlayCleanedPath}
           />

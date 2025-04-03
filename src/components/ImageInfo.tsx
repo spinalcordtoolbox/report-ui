@@ -2,22 +2,31 @@ import classNames from 'classnames'
 
 import { Dataset } from '@/App'
 import Button from '@/components/Button'
+import RadioSelect from '@/components/SelectFitMode'
+import { FitMode } from '@/ImageDisplay'
 
 export function ImageInfo({
   className,
   selected,
   onToggleShowOverlay,
+  fitMode,
+  onChangeFitMode,
 }: {
   className?: string
   selected?: Dataset
   onToggleShowOverlay: () => void
+  fitMode: FitMode
+  onChangeFitMode: (m: FitMode) => any
 }) {
   return selected ? (
     <div className={classNames(className, 'flex flex-col space-y-1')}>
-      <Button onClick={onToggleShowOverlay} className="hidden lg:block">
-        <span className="leading-0">Toggle overlay</span>
-        <img className="h-full" src="images/keyright.png" />
-      </Button>
+      <div className="flex space-x-2">
+        <Button onClick={onToggleShowOverlay} className="hidden lg:block">
+          <span className="leading-0">Toggle overlay</span>
+          <img className="h-full" src="images/keyright.png" />
+        </Button>
+        <RadioSelect fitMode={fitMode} onChangeFitMode={onChangeFitMode} />
+      </div>
       <div className="w-full flex flex-col overflow-y-scroll overflow-x-clip p-2 border-gray-500 rounded-sm border-1">
         <div className="space-x-2">
           <span className="font-bold">SCT version:</span>
