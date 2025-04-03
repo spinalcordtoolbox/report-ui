@@ -14,12 +14,12 @@ export default function Component({
   const id = useId()
 
   return (
-    <div className="bg-input/50 inline-flex h-10 rounded-md  p-0.5">
+    <div className="inline-flex h-10 rounded-md border-gray-500 border-1 p-0.5">
       <RadioGroup
         value={fitMode}
         onValueChange={onChangeFitMode}
         className={classNames(
-          'group after:bg-background has-focus-visible:after:border-ring has-focus-visible:after:ring-ring/50',
+          'group after:bg-slate-300 has-focus-visible:after:border-ring has-focus-visible:after:ring-ring/50',
           'relative inline-grid grid-cols-[1fr_1fr] items-center gap-0 text-sm font-medium',
           'after:absolute after:inset-y-0 after:w-1/2 after:rounded-sm after:shadow-xs',
           'after:transition-[translate,box-shadow] after:duration-300 after:ease-[cubic-bezier(0.16,1,0.3,1)]',
@@ -29,7 +29,10 @@ export default function Component({
       >
         <label
           className={classNames(
-            'group-data-[state=full]:text-muted-foreground/70 relative z-10',
+            'w-36 relative z-10',
+            'group-data-[state=full]:text-muted-foreground group-data-[state=full]:hover:text-foreground',
+            'group-data-[state=full]:hover:bg-accent',
+            'group-data-[state=fit]:font-bold',
             'inline-flex h-full min-w-8 cursor-pointer items-center justify-center px-4',
             'whitespace-nowrap transition-colors select-none',
             'space-x-2',
@@ -41,7 +44,10 @@ export default function Component({
         </label>
         <label
           className={classNames(
-            'group-data-[state=fit]:text-muted-foreground/70 relative z-10',
+            'w-36 relative z-10',
+            'group-data-[state=fit]:text-muted-foreground group-data-[state=fit]:hover:text-foreground',
+            'group-data-[state=fit]:hover:bg-accent',
+            'group-data-[state=full]:font-bold',
             'inline-flex h-full min-w-8 cursor-pointer items-center justify-center px-4',
             'whitespace-nowrap transition-colors select-none',
             'space-x-2',
