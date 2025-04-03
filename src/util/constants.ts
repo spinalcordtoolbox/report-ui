@@ -1,6 +1,6 @@
 import {v4 as uuidv4} from 'uuid';
 
-import { Dataset } from 'App'
+import { Dataset } from '@/App'
 
 /* We need to load these dynamically as the window object can get populated between
   declaration and mounting */

@@ -18,6 +18,7 @@
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-table": "^8.21.2",
     "@types/file-saver": "^2",
+    "@types/node": "^22.14.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@typescript-eslint/parser": "^5.0.1",

@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import classNames from 'classnames'
 
-import logoUrl from 'assets/sct_logo.png'
-import { Table, TableState } from 'components/Table'
-import { ImageOverlay } from 'components/ImageOverlay'
-import Legend from 'components/Legend'
-import { ImageInfo } from 'components/ImageInfo'
-import Loading from 'components/Loading'
-import { ImportExport } from 'components/ImportExport'
-import { getConstants } from 'util/constants'
+import logoUrl from '@/assets/sct_logo.png'
+import { Table, TableState } from '@/components/Table'
+import { ImageOverlay } from '@/components/ImageOverlay'
+import Legend from '@/components/Legend'
+import { ImageInfo } from '@/components/ImageInfo'
+import Loading from '@/components/Loading'
+import { ImportExport } from '@/components/ImportExport'
+import { getConstants } from '@/util/constants'
 
 if (import.meta.env.MODE === 'development') {
   await import('../sample/datasets.js' as any)

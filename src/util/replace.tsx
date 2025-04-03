@@ -1,4 +1,4 @@
-import { Dataset } from 'App'
+import { Dataset } from '@/App'
 
 // replace an object in an immutable array, returning a new array with idx replaced by object
 export const replace = <T,>(

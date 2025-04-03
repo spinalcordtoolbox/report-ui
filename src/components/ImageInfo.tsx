@@ -1,5 +1,5 @@
-import { Dataset } from 'App'
-import Button from 'components/Button'
+import { Dataset } from '@/App'
+import Button from '@/components/Button'
 
 export function ImageInfo({
   selected,

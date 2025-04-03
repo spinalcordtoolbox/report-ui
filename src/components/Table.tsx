@@ -11,12 +11,12 @@ import {
 } from '@tanstack/react-table'
 import { useDebounce, useLocalStorage } from '@uidotdev/usehooks'
 
-import { Dataset } from 'App'
-import { getConstants } from 'util/constants'
-import { replaceDataset } from 'util/replace'
-import ColumnSelect from 'components/ColumnSelect'
-import SearchBox from 'components/SearchBox'
-import Loading from 'components/Loading'
+import { Dataset } from '@/App'
+import { getConstants } from '@/util/constants'
+import { replaceDataset } from '@/util/replace'
+import ColumnSelect from '@/components/ColumnSelect'
+import SearchBox from '@/components/SearchBox'
+import Loading from '@/components/Loading'
 
 const defaultColumns: ColumnDef<Dataset>[] = [
   {

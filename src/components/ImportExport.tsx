@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
 import { saveAs } from 'file-saver'
 
-import { Dataset } from 'App'
-import Button from 'components/Button'
-import { TableState } from 'components/Table'
-import { YamlExport } from 'components/YamlExport'
-import { getConstants } from 'util/constants'
+import { Dataset } from '@/App'
+import Button from '@/components/Button'
+import { TableState } from '@/components/Table'
+import { YamlExport } from '@/components/YamlExport'
+import { getConstants } from '@/util/constants'
 
 const LabelButton = Button<HTMLLabelElement>
 

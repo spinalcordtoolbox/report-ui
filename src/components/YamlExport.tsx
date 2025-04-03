@@ -2,8 +2,8 @@ import { useCallback } from 'react'
 import YAML, { Document, YAMLMap, YAMLSeq } from 'yaml'
 import { saveAs } from 'file-saver'
 
-import { Dataset } from 'App'
-import Button from 'components/Button'
+import { Dataset } from '@/App'
+import Button from '@/components/Button'
 
 type SegType =
   | 'FILES_LESION'
