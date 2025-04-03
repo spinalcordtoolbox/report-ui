@@ -69,7 +69,7 @@ export function ImageOverlay({
       setImagesLoaded(true)
     })
 
-    // when component unmounts, stop don't try to change state
+    // when component unmounts, don't try to change state
     return () => {
       isCancelled = true
     }
