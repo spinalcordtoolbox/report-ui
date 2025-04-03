@@ -78,16 +78,16 @@ export function ImageOverlay({
   return (
     <div className={classNames(className, 'relative min-h-0')}>
       {imagesLoaded ? (
-        <img className="w-full h-full object-contain" src={bgCleanedPath} />
-      ) : null}
-      {imagesLoaded ? (
-        <img
-          className={classNames(
-            'absolute h-full w-full top-0 left-0 object-contain transition-opacity duration-50',
-            showOverlay ? 'opacity-100' : 'opacity-0',
-          )}
-          src={overlayCleanedPath}
-        />
+        <>
+          <img className="w-full h-full object-contain" src={bgCleanedPath} />
+          <img
+            className={classNames(
+              'absolute h-full w-full top-0 left-0 object-contain transition-opacity duration-50',
+              showOverlay ? 'opacity-100' : 'opacity-0',
+            )}
+            src={overlayCleanedPath}
+          />
+        </>
       ) : null}
     </div>
   )
