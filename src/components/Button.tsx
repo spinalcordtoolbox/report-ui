@@ -27,6 +27,7 @@ export default function Button<T extends HTMLElement>({
       className={classNames(
         'h-10 w-fit border-gray-500 border-1 rounded-sm mb-1 self-start',
         'cursor-pointer hover:bg-gray-100/50 active:bg-gray-100 transition-colors',
+        'disabled:text-muted-foreground/80 disabled:border-muted-foreground/80 disabled:hover:bg-background',
         className,
       )}
     >

@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import YAML, { Document, YAMLMap, YAMLSeq } from 'yaml'
 import { saveAs } from 'file-saver'
 
@@ -88,13 +88,26 @@ export function YamlExport({ datasets }: PropTypes) {
     [datasets],
   )
 
+  const failsCount = useMemo(
+    () => datasets.filter((d) => d.qc === '❌').length,
+    [datasets],
+  )
+  const artifactsCount = useMemo(
+    () => datasets.filter((d) => d.qc === '⚠️').length,
+    [datasets],
+  )
+
   const exportFails = useCallback(() => exportYaml('❌'), [exportYaml])
   const exportArtifacts = useCallback(() => exportYaml('⚠️'), [exportYaml])
 
   return (
     <>
-      <Button onClick={exportFails}>Save Fails</Button>
-      <Button onClick={exportArtifacts}>Save Artifacts</Button>
+      <Button onClick={exportFails} disabled={failsCount <= 0}>
+        Save Fails
+      </Button>
+      <Button onClick={exportArtifacts} disabled={artifactsCount <= 0}>
+        Save Artifacts
+      </Button>
     </>
   )
 }
