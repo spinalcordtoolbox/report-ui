@@ -10,12 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@radix-ui/react-radio-group": "^1.2.3",
     "react": "19.1",
     "react-dom": "19.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@radix-ui/react-radio-group": "^1.2.3",
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-table": "^8.21.2",
     "@types/file-saver": "^2",
