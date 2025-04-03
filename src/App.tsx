@@ -4,12 +4,11 @@ import classNames from 'classnames'
 
 import logoUrl from '@/assets/sct_logo.png'
 import { Table, TableState } from '@/components/Table'
-import { ImageOverlay } from '@/components/ImageOverlay'
 import Legend from '@/components/Legend'
-import { ImageInfo } from '@/components/ImageInfo'
 import Loading from '@/components/Loading'
 import { ImportExport } from '@/components/ImportExport'
 import { getConstants } from '@/util/constants'
+import ImageDisplay from '@/ImageDisplay'
 
 if (import.meta.env.MODE === 'development') {
   await import('../sample/datasets.js' as any)
@@ -123,26 +122,14 @@ function App() {
           />
         </div>
 
-        <div
-          className={classNames(
-            'w-full lg:w-7/12 h-1/2 lg:h-full p-4',
-            'flex flex-col flex-nowrap space-y-4 relative',
-          )}
-        >
-          <div className="w-full relative min-h-0">
-            <ImageOverlay
-              backgroundImage={backgroundImage}
-              overlayImage={overlayImage}
-              showOverlay={showOverlay}
-            />
-          </div>
-          <div className="w-full flex flex-col space-y-1">
-            <ImageInfo
-              selected={selected}
-              onToggleShowOverlay={() => setShowOverlay((o) => !o)}
-            />
-          </div>
-        </div>
+        <ImageDisplay
+          className="w-full lg:w-7/12 h-1/2 lg:h-full p-4"
+          backgroundImage={backgroundImage}
+          overlayImage={overlayImage}
+          showOverlay={showOverlay}
+          selected={selected}
+          onToggleShowOverlay={() => setShowOverlay((o) => !o)}
+        />
       </div>
     </>
   )

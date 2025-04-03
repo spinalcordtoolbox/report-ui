@@ -1,15 +1,19 @@
+import classNames from 'classnames'
+
 import { Dataset } from '@/App'
 import Button from '@/components/Button'
 
 export function ImageInfo({
+  className,
   selected,
   onToggleShowOverlay,
 }: {
+  className?: string
   selected?: Dataset
   onToggleShowOverlay: () => void
 }) {
   return selected ? (
-    <>
+    <div className={classNames(className, 'flex flex-col space-y-1')}>
       <Button onClick={onToggleShowOverlay} className="hidden lg:block">
         <span className="leading-0">Toggle overlay</span>
         <img className="h-full" src="images/keyright.png" />
@@ -24,6 +28,6 @@ export function ImageInfo({
           <span>{selected.cmdline}</span>
         </div>
       </div>
-    </>
+    </div>
   ) : null
 }

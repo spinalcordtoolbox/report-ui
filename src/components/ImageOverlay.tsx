@@ -14,14 +14,19 @@ function preloadImage(src: string) {
   })
 }
 
-export function ImageOverlay({
-  backgroundImage,
-  overlayImage,
-  showOverlay,
-}: {
+export interface PropTypes {
   backgroundImage: string
   overlayImage: string
   showOverlay: boolean
+}
+
+export function ImageOverlay({
+  className,
+  backgroundImage,
+  overlayImage,
+  showOverlay,
+}: PropTypes & {
+  className: string
 }) {
   /*
    * Do some imperative trickery to try to synchronize gifs.
@@ -71,7 +76,7 @@ export function ImageOverlay({
   }, [bgCleanedPath, overlayCleanedPath])
 
   return (
-    <>
+    <div className={classNames(className, 'relative min-h-0')}>
       {imagesLoaded ? (
         <img className="w-full h-full object-contain" src={bgCleanedPath} />
       ) : null}
@@ -84,6 +89,6 @@ export function ImageOverlay({
           src={overlayCleanedPath}
         />
       ) : null}
-    </>
+    </div>
   )
 }
