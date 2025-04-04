@@ -18,24 +18,19 @@ export default function Component({
       <RadioGroup
         value={fitMode}
         onValueChange={onChangeFitMode}
-        className={classNames(
-          'group after:bg-slate-300 has-focus-visible:after:border-ring has-focus-visible:after:ring-ring/50',
-          'relative inline-grid grid-cols-[1fr_1fr] items-center gap-0 text-sm font-medium',
-          'after:absolute after:inset-y-0 after:w-1/2 after:rounded-sm after:shadow-xs',
-          'after:transition-[translate,box-shadow] after:duration-300 after:ease-[cubic-bezier(0.16,1,0.3,1)]',
-          'has-focus-visible:after:ring-[3px] data-[state=fit]:after:translate-x-0 data-[state=full]:after:translate-x-full',
-        )}
+        className="group relative inline-grid grid-cols-[1fr_1fr] items-center gap-0 font-medium"
         data-state={fitMode}
       >
         <label
           className={classNames(
             'w-36 relative z-10',
             'group-data-[state=full]:text-muted-foreground group-data-[state=full]:hover:text-foreground',
-            'group-data-[state=full]:hover:bg-accent',
+            'group-data-[state=full]:hover:bg-gray-100',
             'group-data-[state=fit]:font-bold',
-            'inline-flex h-full min-w-8 cursor-pointer items-center justify-center px-4',
+            'inline-flex h-full min-w-8 cursor-pointer items-center justify-center px-4 pl-6',
             'whitespace-nowrap transition-colors select-none',
             'space-x-2',
+            'border-r-1 border-gray-500',
           )}
         >
           <span className="leading-0">Fit to height</span>
@@ -46,9 +41,9 @@ export default function Component({
           className={classNames(
             'w-36 relative z-10',
             'group-data-[state=fit]:text-muted-foreground group-data-[state=fit]:hover:text-foreground',
-            'group-data-[state=fit]:hover:bg-accent',
+            'group-data-[state=fit]:hover:bg-gray-100',
             'group-data-[state=full]:font-bold',
-            'inline-flex h-full min-w-8 cursor-pointer items-center justify-center px-4',
+            'inline-flex h-full min-w-8 cursor-pointer items-center justify-center px-4 pr-2',
             'whitespace-nowrap transition-colors select-none',
             'space-x-2',
           )}
