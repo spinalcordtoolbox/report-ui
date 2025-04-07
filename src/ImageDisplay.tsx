@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import classNames from 'classnames'
 
 import {
@@ -14,16 +13,18 @@ interface PropTypes extends OverlayProps {
   className: string
   selected?: Dataset
   onToggleShowOverlay: () => any
+  fitMode: FitMode
+  onChangeFitMode: (f: FitMode) => any
 }
 
 export default function ImageDisplay({
   className,
   selected,
   onToggleShowOverlay,
+  fitMode,
+  onChangeFitMode,
   ...overlayProps
 }: PropTypes) {
-  const [fitMode, setFitMode] = useState<FitMode>('fit')
-
   return (
     <div
       className={classNames(
@@ -37,7 +38,7 @@ export default function ImageDisplay({
         selected={selected}
         onToggleShowOverlay={onToggleShowOverlay}
         fitMode={fitMode}
-        onChangeFitMode={setFitMode}
+        onChangeFitMode={onChangeFitMode}
       />
     </div>
   )

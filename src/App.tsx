@@ -8,7 +8,7 @@ import Legend from '@/components/Legend'
 import Loading from '@/components/Loading'
 import { ImportExport } from '@/components/ImportExport'
 import { getConstants } from '@/util/constants'
-import ImageDisplay from '@/ImageDisplay'
+import ImageDisplay, { FitMode } from '@/ImageDisplay'
 
 if (import.meta.env.MODE === 'development') {
   await import('../sample/datasets.js' as any)
@@ -66,6 +66,11 @@ function App() {
     null,
   )
 
+  const [imageFitMode, setImageFitMode] = useState<FitMode>('fit')
+  const toggleImageFit = useCallback(() => {
+    setImageFitMode(imageFitMode === 'fit' ? 'full' : 'fit')
+  }, [imageFitMode, setImageFitMode])
+
   /* Force a render cycle before loading goes away, to force unmounts */
   useEffect(() => {
     if (!loading) {
@@ -113,6 +118,7 @@ function App() {
             onChangeDatasets={setDatasets}
             onSelectRow={handleSelectRow}
             onToggleShowOverlay={() => setShowOverlay((o) => !o)}
+            onToggleImageFit={toggleImageFit}
           />
           <ImportExport
             datasets={datasets}
@@ -128,6 +134,8 @@ function App() {
           overlayImage={overlayImage}
           showOverlay={showOverlay}
           selected={selected}
+          fitMode={imageFitMode}
+          onChangeFitMode={setImageFitMode}
           onToggleShowOverlay={() => setShowOverlay((o) => !o)}
         />
       </div>

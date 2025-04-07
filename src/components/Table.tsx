@@ -112,6 +112,7 @@ export type PropTypes = {
   onChangeDatasets: (d: Dataset[]) => any
   onSelectRow: (cmdline: string) => any
   onToggleShowOverlay: () => void
+  onToggleImageFit: () => void
 }
 
 export function Table({
@@ -120,6 +121,7 @@ export function Table({
   onChangeDatasets,
   onSelectRow,
   onToggleShowOverlay,
+  onToggleImageFit,
 }: PropTypes) {
   // for datatable type
   const [columns] = useState([...defaultColumns])
@@ -335,7 +337,12 @@ export function Table({
 
       switch (event.key) {
         case 'f':
+        case 'F':
           cycleQc(row.id)
+          break
+        case 'd':
+        case 'D':
+          onToggleImageFit()
           break
         case 'ArrowRight':
           onToggleShowOverlay()
@@ -354,7 +361,13 @@ export function Table({
 
       onSelectRow(sibling.id)
     },
-    [tbodyRef.current, cycleQc],
+    [
+      tbodyRef.current,
+      cycleQc,
+      updateRank,
+      onToggleShowOverlay,
+      onToggleImageFit,
+    ],
   )
 
   useEffect(() => {
