@@ -1,9 +1,11 @@
 import classNames from 'classnames'
 
 import { Dataset } from '@/App'
+import { FitMode } from '@/ImageDisplay'
+
 import Button from '@/components/Button'
 import RadioSelect from '@/components/SelectFitMode'
-import { FitMode } from '@/ImageDisplay'
+import KeyIcon from '@/components/KeyIcon'
 
 export function ImageInfo({
   className,
@@ -23,7 +25,7 @@ export function ImageInfo({
       <div className="flex space-x-2">
         <Button onClick={onToggleShowOverlay} className="hidden lg:block">
           <span className="leading-0">Toggle overlay</span>
-          <img className="h-full" src="images/keyright.png" />
+          <KeyIcon label="→" className="pb-0.5" />
         </Button>
         <RadioSelect fitMode={fitMode} onChangeFitMode={onChangeFitMode} />
       </div>

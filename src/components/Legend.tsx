@@ -1,32 +1,46 @@
+import KeyIcon from '@/components/KeyIcon'
+
 const KEYS = [
   {
-    image: 'keyup.png',
+    key: '↑',
     label: 'Previous',
+    className: 'pb-1',
   },
   {
-    image: 'keydown.png',
+    key: '↓',
     label: 'Next',
+    className: 'pb-1',
   },
   {
-    image: 'keyright.png',
+    key: '→',
     label: 'Toggle Overlay',
+    className: 'pb-1',
   },
   {
-    image: 'f-icon.png',
-    label: 'QC: Pass ✅ | Fail ❌ | Artifact ⚠️',
+    key: 'F',
+    label: (
+      <>
+        <span className="font-bold">QC</span>: Pass ✅ | Fail ❌ | Artifact ⚠️
+      </>
+    ),
   },
   {
-    image: '0-9-icon.png',
+    key: 'D',
+    label: 'Toggle image fit',
+  },
+  {
+    key: '0-9',
     label: 'Rank',
+    className: 'text-xs',
   },
 ]
 
 export default function Legend() {
   return (
     <div className="flex flex-wrap space-x-2 text-sm text-gray-700">
-      {KEYS.map(({ image, label }) => (
-        <div key={image} className="h-8 flex flex-row items-center space-x-1">
-          <img src={`images/${image}`} className="h-full object-contain" />
+      {KEYS.map(({ key, label, className }) => (
+        <div key={key} className="h-8 flex flex-row items-center space-x-1">
+          <KeyIcon label={key} className={className} />
           <span>{label}</span>
         </div>
       ))}
