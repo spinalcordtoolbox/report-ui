@@ -8,7 +8,7 @@ export default function KeyIcon({
   className?: string
 }) {
   return (
-    <div className="relative h-full">
+    <div className="relative h-full min-w-8">
       <img src="images/key-icon.png" className="h-full" />
       <div className="absolute top-[calc(50%_-_2px)] left-1/2 -translate-x-1/2 -translate-y-1/2 text-shadow-sm">
         <div
