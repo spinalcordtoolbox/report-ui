@@ -317,6 +317,11 @@ export function Table({
     [datasets, changeDatasets],
   )
 
+  const keyDebug = useMemo(() => {
+    const params = new URLSearchParams(window.location.search)
+    return !!params.get('debug_keys')
+  }, [window.location.search])
+
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLTableRowElement>) => {
       event.preventDefault()
@@ -330,6 +335,17 @@ export function Table({
       const currentRow = tbodyRef.current.children.namedItem(row.id)
 
       let sibling
+
+      if (keyDebug) {
+        console.log('===== Key event =====')
+        console.dir(event.key)
+        if (event.key.match(/\d/)) {
+          console.log(`${event.key} matches /\\d/`)
+        } else {
+          console.log(`${event.key} does not match /\\d/`)
+        }
+        console.log('=====')
+      }
 
       if (event.key.match(/\d/)) {
         updateRank(row.id, parseInt(event.key))
@@ -367,6 +383,7 @@ export function Table({
       updateRank,
       onToggleShowOverlay,
       onToggleImageFit,
+      keyDebug,
     ],
   )
 
