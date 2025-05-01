@@ -19,10 +19,14 @@ export const getConstants = () => {
   const DATASETS_LOCAL_STORAGE_KEY = `${LOCAL_STORAGE_UUID}-sct-qc-report_datasets`
   const TABLE_LOCAL_STORAGE_KEY = `${LOCAL_STORAGE_UUID}-sct-qc-reports_table`
 
+  // only for use in dev
+  const DATASETS_PATH_PREFIX = import.meta.env.VITE_SAMPLE_DATASETS ? `sample/${import.meta.env.VITE_SAMPLE_DATASETS}`  : ''
+
   return {
     INITIAL_DATASETS,
     LOCAL_STORAGE_UUID,
     DATASETS_LOCAL_STORAGE_KEY,
     TABLE_LOCAL_STORAGE_KEY,
+    DATASETS_PATH_PREFIX,
   }
 }

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useLocalStorage } from '@uidotdev/usehooks'
 import classNames from 'classnames'
 
 import logoUrl from '@/assets/sct_logo.png'
@@ -7,8 +6,8 @@ import { Table, TableState } from '@/components/Table'
 import Legend from '@/components/Legend'
 import Loading from '@/components/Loading'
 import { ImportExport } from '@/components/ImportExport'
-import { getConstants } from '@/util/constants'
 import ImageDisplay, { FitMode } from '@/ImageDisplay'
+import { useDatasetSources } from '@/lib/hooks/useDatasetSources'
 
 import '@/util/devData'
 
@@ -25,23 +24,12 @@ export interface Dataset {
   backgroundImage: string
   overlayImage: string
   date: string
-  rank: number
+  rank: number | null
   qc: string
 }
 
-function cleanDataset(dataset: Dataset): Dataset {
-  return {
-    ...dataset,
-    backgroundImage: dataset.backgroundImage.replace(/^([^/])/, '/$1'),
-    overlayImage: dataset.overlayImage.replace(/^([^/])/, '/$1'),
-  }
-}
-
 function App() {
-  const [datasets, setDatasets] = useLocalStorage<Array<Dataset>>(
-    getConstants().DATASETS_LOCAL_STORAGE_KEY,
-    getConstants().INITIAL_DATASETS.map(cleanDataset),
-  )
+  const [datasets, setDatasets] = useDatasetSources()
 
   const [selected, setSelected] = useState<Dataset>()
 

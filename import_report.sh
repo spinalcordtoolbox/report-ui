@@ -22,9 +22,6 @@ echo "[+] Copying to $WORKDIR"
 mkdir -p "$WORKDIR"
 cp -r "$REPORT_PATH"/* "$WORKDIR/"
 
-echo "[+] Modifying asset paths"
-sed -i "s%\"data/%\"$WORKDIR/data/%g" "$WORKDIR/js/datasets.js"
-
 echo "Done!"
 echo
 echo "You can target this dataset in dev by running VITE_SAMPLE_DATASETS=$UUID yarn dev"
