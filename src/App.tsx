@@ -10,9 +10,7 @@ import { ImportExport } from '@/components/ImportExport'
 import { getConstants } from '@/util/constants'
 import ImageDisplay, { FitMode } from '@/ImageDisplay'
 
-if (import.meta.env.MODE === 'development') {
-  await import('../sample/datasets.js' as any)
-}
+import '@/util/devData'
 
 export interface Dataset {
   path: string

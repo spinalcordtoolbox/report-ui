@@ -18,11 +18,6 @@ We use [Vite](https://vite.dev/) for building,
 2. In the repo, run `yarn`
 3. Run a development server with hot module replacement with `yarn dev`. It'll print a link you can click or copy into your browser.
 
-### Building for production
-
-1. `yarn build`
-2. Open the bundled index.html in your browser `:)` - it'll live in `dist/`
-
 ### File bundling
 
 Since a main use case for QC reports is offline generation and viewing, and since modern browsers
@@ -48,6 +43,26 @@ as the plugin runs.
 
 ### Injecting datasets
 
-In order to add data to the report, simply overwrite `datasets.js`, which is a simple JS file that
-populates `window.SCT_QC_DATASETS` with a JSON array of datasets. You can find a reference version in
-`public/datasets.js`
+This package is meant to be used in tandem with [SCT](https://github.com/spinalcordtoolbox/spinalcordtoolbox)'s
+QC report generator, which knows how to inject datasets into the `js/datasets.js` file.
+
+### Building for production
+
+1. `yarn build`
+2. Open the bundled index.html in your browser `:)` - it'll live in `dist/`
+
+### Developing against example data
+
+Sometimes you need to run the development version against a report generated in SCT. To do so, use
+the utility script `import_report.sh path_to_qc_root`, where `path_to_qc_root` is the directory
+containing index.html, js, py, etc. This will copy the report into the `sample/` directory,
+with some modifications to make it work with the dev server.
+
+You can change which report your targeting by setting the `VITE_SAMPLE_DATASETS` environment
+variable. You can add it to `.env.development.local`:
+
+```
+VITE_SAMPLE_DATASETS=0f51622a-6059-4cfe-bedb-0a766e0c705e
+```
+
+Then run `yarn dev` as usual.

@@ -1,3 +1,8 @@
+sample
+!sample/
+sample/*
+!sample/default/
+
 # Logs
 logs
 *.log
