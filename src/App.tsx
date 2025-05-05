@@ -12,6 +12,7 @@ import { useDatasetSources } from '@/lib/hooks/useDatasetSources'
 import '@/util/devData'
 
 export interface Dataset {
+  id: string
   path: string
   cmdline: string
   command: string
@@ -38,8 +39,8 @@ function App() {
   const [showOverlay, setShowOverlay] = useState(true)
 
   const handleSelectRow = useCallback(
-    (cmdline: string) => {
-      const dataset = datasets.find((r) => r.cmdline == cmdline)
+    (id: string) => {
+      const dataset = datasets.find((r) => r.id == id)
       setSelected(dataset)
       setBackgroundImage(dataset?.backgroundImage ?? '')
       setOverlayImage(dataset?.overlayImage ?? '')

@@ -16,10 +16,10 @@ export const replace = <T,>(
 
 export function replaceDataset(
   datasets: Dataset[],
-  cmdline: string,
+  id: string,
   updateArgs: Partial<Dataset>,
 ): Dataset[] {
-  const idx = datasets.findIndex((d) => d.cmdline === cmdline)
+  const idx = datasets.findIndex((d) => d.id === id)
   const dataset = datasets[idx]
   return replace(datasets, idx, { ...dataset, ...updateArgs })
 }

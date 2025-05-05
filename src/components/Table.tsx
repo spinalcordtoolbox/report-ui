@@ -110,7 +110,7 @@ export type PropTypes = {
   datasets: Dataset[]
   initialTableState: TableState | null
   onChangeDatasets: (d: Dataset[]) => any
-  onSelectRow: (cmdline: string) => any
+  onSelectRow: (id: string) => any
   onToggleShowOverlay: () => void
   onToggleImageFit: () => void
 }
@@ -219,7 +219,7 @@ export function Table({
     () =>
       datasets.map((dataset) => ({
         ...dataset,
-        position: rowOrder[dataset.cmdline],
+        position: rowOrder[dataset.id],
       })),
     [datasets, rowOrder],
   )
@@ -246,7 +246,7 @@ export function Table({
     onColumnVisibilityChange: setColumnVisibility as any,
     onColumnOrderChange: setColumnOrder,
     onSortingChange: sortByColumns,
-    getRowId: (row) => row.cmdline,
+    getRowId: (row) => row.id,
     getFilteredRowModel: getFilteredRowModel(),
     globalFilterFn: 'includesString',
   })
@@ -276,10 +276,10 @@ export function Table({
     onChangeDatasets(replaceDatasets)
   }, [])
 
-  const cycleQc = (cmdline: string) => {
-    const dataset = datasets.find((d) => d.cmdline === cmdline)
+  const cycleQc = (id: string) => {
+    const dataset = datasets.find((d) => d.id === id)
     if (!dataset) {
-      console.error(`Dataset not found: ${cmdline}`)
+      console.error(`Dataset not found: ${id}`)
       return
     }
 
@@ -302,17 +302,17 @@ export function Table({
         break
     }
 
-    changeDatasets(replaceDataset(datasets, cmdline, { qc: nextQc }))
+    changeDatasets(replaceDataset(datasets, id, { qc: nextQc }))
   }
 
   const updateRank = useCallback(
-    (cmdline: string, rank: number) => {
+    (id: string, rank: number) => {
       if (!(rank >= 0 && rank <= 9)) {
-        console.error(`Invalid rank set for ${cmdline}: ${rank}`)
+        console.error(`Invalid rank set for ${id}: ${rank}`)
         return
       }
 
-      changeDatasets(replaceDataset(datasets, cmdline, { rank }))
+      changeDatasets(replaceDataset(datasets, id, { rank }))
     },
     [datasets, changeDatasets],
   )

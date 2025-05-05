@@ -12,6 +12,15 @@ function cleanDataset(dataset: Dataset): Dataset {
   }
 }
 
+async function generateId(d: Dataset): Promise<[id: string, d: Dataset]> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(`${d.path}:${d.cmdline}:${d.date}`)
+  const hashBuffer = await window.crypto.subtle.digest('SHA-1', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer)) // convert buffer to byte array
+  const id = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('') // convert bytes to hex string
+  return [id, d]
+}
+
 export function useDatasetSources(): [
   Dataset[],
   React.Dispatch<React.SetStateAction<Dataset[]>>,
@@ -35,28 +44,30 @@ export function useDatasetSources(): [
       return
     }
 
-    const mergedData = initialData.map((dataset) => {
-      let qc = ''
-      let rank = null
-      const localMatch = localStorageDatasets.find(
-        (d) => d.cmdline === dataset.cmdline,
-      )
-      if (localMatch) {
-        qc = localMatch.qc
-        rank = localMatch.rank
-      }
+    Promise.all(initialData.map(generateId)).then((ids) => {
+      const mergedData = ids.map((pair) => {
+        const [id, dataset] = pair
+        let qc = ''
+        let rank = null
+        const localMatch = localStorageDatasets.find((d) => d.id && d.id === id)
+        if (localMatch) {
+          qc = localMatch.qc
+          rank = localMatch.rank
+        }
 
-      return {
-        ...dataset,
-        qc,
-        rank,
-        backgroundImage: `${DATASETS_PATH_PREFIX}${dataset.backgroundImage}`,
-        overlayImage: `${DATASETS_PATH_PREFIX}${dataset.overlayImage}`,
-      }
-    }, [])
+        return {
+          ...dataset,
+          id,
+          qc,
+          rank,
+          backgroundImage: `${DATASETS_PATH_PREFIX}${dataset.backgroundImage}`,
+          overlayImage: `${DATASETS_PATH_PREFIX}${dataset.overlayImage}`,
+        }
+      }, [])
 
-    setDatasets(mergedData)
-    initialized = true
+      setDatasets(mergedData)
+      initialized = true
+    })
   }, [])
 
   return [localStorageDatasets, setDatasets]
