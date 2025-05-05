@@ -1,7 +1,7 @@
 {
   "name": "sct-qc-reports",
   "private": true,
-  "version": "0.1.0-rc7",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
