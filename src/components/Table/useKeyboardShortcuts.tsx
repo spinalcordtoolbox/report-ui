@@ -9,6 +9,7 @@ export default function useKeyboardShortcuts(
   onToggleImageFit: () => void,
   onToggleShowOverlay: () => void,
   onSelectRow: (id: string) => any,
+  onFocusSearch: () => any,
 ) {
   const cycleQc = (id: string) => {
     const dataset = datasets.find((d) => d.id === id)
@@ -83,6 +84,12 @@ export default function useKeyboardShortcuts(
         updateRank(row.id, parseInt(event.key))
       }
 
+      if (event.getModifierState('Control') || event.getModifierState('Meta')) {
+        if (event.key === 'k' || event.key === 'K') {
+          onFocusSearch()
+        }
+      }
+
       switch (event.key) {
         case 'f':
         case 'F':
@@ -106,6 +113,11 @@ export default function useKeyboardShortcuts(
           sibling = currentRow?.nextElementSibling
           event.preventDefault()
           event.stopPropagation()
+          break
+        case '/':
+          event.preventDefault()
+          event.stopPropagation()
+          onFocusSearch()
           break
         default:
           break

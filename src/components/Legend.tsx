@@ -36,6 +36,10 @@ const KEYS = [
       label: 'Rank',
       iconClassName: 'text-xs',
     },
+    {
+      key: '/',
+      label: 'Jump to search',
+    },
   ],
 ]
 

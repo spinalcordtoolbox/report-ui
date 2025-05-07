@@ -230,6 +230,16 @@ export function Table({
     onChangeDatasets(replaceDatasets)
   }, [])
 
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  const focusSearch = useCallback(() => {
+    if (!searchRef.current) {
+      return
+    }
+
+    searchRef.current.focus()
+  }, [searchRef.current])
+
   const handleKeyDown = useKeyboardShortcuts(
     datasets,
     changeDatasets,
@@ -237,6 +247,7 @@ export function Table({
     onToggleImageFit,
     onToggleShowOverlay,
     onSelectRow,
+    focusSearch,
   )
 
   useHandleOutsideKeydown(tbodyRef)
@@ -270,7 +281,11 @@ export function Table({
           onChange={() => {}}
           columns={dataTable.getAllLeafColumns()}
         />
-        <SearchBox value={searchString} onChange={setSearchString} />
+        <SearchBox
+          ref={searchRef}
+          value={searchString}
+          onChange={setSearchString}
+        />
       </div>
       <div className="overflow-y-scroll w-full overflow-x-scroll">
         <table className="min-w-full border-1 border-gray-200 rounded-sm text-[10px] border-spacing-0 border-separate flex-1">
