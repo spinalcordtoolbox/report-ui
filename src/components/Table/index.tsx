@@ -9,14 +9,24 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import { useDebounce, useLocalStorage } from '@uidotdev/usehooks'
+import { useDebounce } from '@uidotdev/usehooks'
 
 import { Dataset } from '@/App'
-import { getConstants } from '@/util/constants'
-import { replaceDataset } from '@/util/replace'
 import ColumnSelect from '@/components/ColumnSelect'
 import SearchBox from '@/components/SearchBox'
 import Loading from '@/components/Loading'
+import useKeyboardShortcuts from '@/components/Table/useKeyboardShortcuts'
+import useTableLocalStorage from '@/components/Table/useTableLocalStorage'
+import useHandleOutsideKeydown from '@/components/Table/useHandleOutsideKeydown'
+
+import {
+  TableState,
+  ColumnVisibility,
+  RowOrder,
+  RowFilter,
+} from '@/components/Table/types'
+
+export type { TableState } from '@/components/Table/types'
 
 const defaultColumns: ColumnDef<Dataset>[] = [
   {
@@ -64,33 +74,6 @@ const defaultColumns: ColumnDef<Dataset>[] = [
 
 interface TableData extends Dataset {
   position: number
-}
-
-type RowOrder = {
-  [key: string]: number
-}
-
-type RowFilter = string
-
-type ColumnVisibility = {
-  date: boolean
-  dataset: boolean
-  subject: boolean
-  path: boolean
-  inputFile: boolean
-  contrast: boolean
-  command: boolean
-  cmdline: boolean
-  rank: boolean
-  qc: boolean
-}
-
-export interface TableState {
-  columnOrder: ColumnOrderState
-  columnVisibility: ColumnVisibility
-  sorting: SortingState
-  rowOrder: RowOrder
-  rowFilter: RowFilter
 }
 
 const DEFAULT_COLUMN_VISIBILITY: ColumnVisibility = {
@@ -141,72 +124,43 @@ export function Table({
     initialTableState?.rowFilter || '',
   )
 
-  const [localStorage, setLocalStorage] = useLocalStorage<TableState>(
-    getConstants().TABLE_LOCAL_STORAGE_KEY,
-    initialTableState || {
-      columnOrder: [],
-      columnVisibility: DEFAULT_COLUMN_VISIBILITY,
-      sorting: [],
-      rowOrder: {},
-      rowFilter: '',
-    },
-  )
+  const tableState: TableState = {
+    columnOrder,
+    columnVisibility,
+    sorting,
+    rowOrder,
+    rowFilter,
+  }
 
-  const [localStorageLoaded, setLocalStorageLoaded] = useState(false)
-
-  /* Once, at mount, load from local storage */
-  useEffect(() => {
-    /* Table state was loaded from file, overwrite */
-    if (initialTableState) {
-      setLocalStorage(initialTableState)
-      setLocalStorageLoaded(true)
-      return
-    }
-
-    const { columnOrder, columnVisibility, sorting, rowOrder, rowFilter } =
-      localStorage
-
-    setColumnOrder(columnOrder)
-    setSorting(sorting)
-    setRowOrder(rowOrder)
-    setRowFilter(rowFilter)
-    setColumnVisibility(columnVisibility)
-
-    setLocalStorageLoaded(true)
-  }, [])
-
-  /* Update local storage as effect for performance reasons */
-  useEffect(() => {
-    if (!localStorageLoaded) {
-      return
-    }
-
-    setLocalStorage({
+  const setTableState = useCallback(
+    ({
       columnOrder,
       columnVisibility,
       sorting,
       rowOrder,
       rowFilter,
-    })
+    }: TableState) => {
+      setColumnOrder(columnOrder)
+      setSorting(sorting)
+      setRowOrder(rowOrder)
+      setRowFilter(rowFilter)
+      setColumnVisibility(columnVisibility)
+    },
+    [
+      setColumnOrder,
+      setSorting,
+      setRowOrder,
+      setRowFilter,
+      setColumnVisibility,
+    ],
+  )
 
-    /* on unmount, save once more */
-    return () => {
-      setLocalStorage({
-        columnOrder,
-        columnVisibility,
-        sorting,
-        rowOrder,
-        rowFilter,
-      })
-    }
-  }, [
-    localStorageLoaded,
-    columnOrder,
-    sorting,
-    rowOrder,
-    rowFilter,
-    columnVisibility,
-  ])
+  const localStorageLoaded = useTableLocalStorage(
+    tableState,
+    initialTableState,
+    setTableState,
+    DEFAULT_COLUMN_VISIBILITY,
+  )
 
   const sortByColumns = useCallback(
     (sortingState: Updater<SortingState>) => {
@@ -276,141 +230,16 @@ export function Table({
     onChangeDatasets(replaceDatasets)
   }, [])
 
-  const cycleQc = (id: string) => {
-    const dataset = datasets.find((d) => d.id === id)
-    if (!dataset) {
-      console.error(`Dataset not found: ${id}`)
-      return
-    }
-
-    let nextQc
-    switch (dataset.qc) {
-      case '':
-        nextQc = '✅'
-        break
-      case '✅':
-        nextQc = '❌'
-        break
-      case '❌':
-        nextQc = '⚠️'
-        break
-      case '⚠️':
-        nextQc = ''
-        break
-      default:
-        nextQc = ''
-        break
-    }
-
-    changeDatasets(replaceDataset(datasets, id, { qc: nextQc }))
-  }
-
-  const updateRank = useCallback(
-    (id: string, rank: number) => {
-      if (!(rank >= 0 && rank <= 9)) {
-        console.error(`Invalid rank set for ${id}: ${rank}`)
-        return
-      }
-
-      changeDatasets(replaceDataset(datasets, id, { rank }))
-    },
-    [datasets, changeDatasets],
+  const handleKeyDown = useKeyboardShortcuts(
+    datasets,
+    changeDatasets,
+    tbodyRef,
+    onToggleImageFit,
+    onToggleShowOverlay,
+    onSelectRow,
   )
 
-  const keyDebug = useMemo(() => {
-    const params = new URLSearchParams(window.location.search)
-    return !!params.get('debug_keys')
-  }, [window.location.search])
-
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLTableRowElement>) => {
-      if (!tbodyRef.current) {
-        return
-      }
-
-      const row = event.currentTarget
-
-      const currentRow = tbodyRef.current.children.namedItem(row.id)
-
-      let sibling
-
-      if (keyDebug) {
-        console.log('===== Key event =====')
-        console.dir(event.key)
-        if (event.key.match(/\d/)) {
-          console.log(`${event.key} matches /\\d/`)
-        } else {
-          console.log(`${event.key} does not match /\\d/`)
-        }
-        console.log('=====')
-      }
-
-      if (event.key.match(/\d/)) {
-        updateRank(row.id, parseInt(event.key))
-      }
-
-      switch (event.key) {
-        case 'f':
-        case 'F':
-          cycleQc(row.id)
-          break
-        case 'd':
-        case 'D':
-          onToggleImageFit()
-          break
-        case 'ArrowRight':
-          onToggleShowOverlay()
-          event.preventDefault()
-          event.stopPropagation()
-          return
-        case 'ArrowUp':
-          sibling = currentRow?.previousElementSibling
-          event.preventDefault()
-          event.stopPropagation()
-          break
-        case 'ArrowDown':
-          sibling = currentRow?.nextElementSibling
-          event.preventDefault()
-          event.stopPropagation()
-          break
-        default:
-          break
-      }
-      if (!sibling) return
-      ;(sibling as any).focus()
-
-      onSelectRow(sibling.id)
-    },
-    [
-      tbodyRef.current,
-      cycleQc,
-      updateRank,
-      onToggleShowOverlay,
-      onToggleImageFit,
-      keyDebug,
-    ],
-  )
-
-  useEffect(() => {
-    const handleOutsideKeyDown = (e: KeyboardEvent) => {
-      if (!tbodyRef.current || tbodyRef.current.children.length === 0) {
-        return
-      }
-
-      const key = e.key
-
-      if (key !== 'ArrowDown') {
-        return
-      }
-
-      ;(tbodyRef.current.children[0] as any).focus()
-    }
-    document.addEventListener('keydown', handleOutsideKeyDown)
-
-    return () => {
-      document.removeEventListener('keydown', handleOutsideKeyDown)
-    }
-  }, [tbodyRef.current])
+  useHandleOutsideKeydown(tbodyRef)
 
   const leafColumns = dataTable.getLeftLeafColumns()
 
