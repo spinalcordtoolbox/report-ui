@@ -1,3 +1,4 @@
+import React from 'react'
 import classNames from 'classnames'
 
 import { Dataset } from '@/App'
@@ -20,6 +21,14 @@ export function ImageInfo({
   fitMode: FitMode
   onChangeFitMode: (m: FitMode) => any
 }) {
+  /* Add soft breaks ("line break opportunities") after commas and inside long strings to let
+   *  cmdline break gracefully without interfering with copy/paste
+   */
+  const cmdlineWithSplits = selected?.cmdline
+    ?.split(/(\S+?,)/) // commas
+    .flatMap((s) => s.split(/(\w{20})/)) // words > 20 chars
+    .filter((s) => s) // filter blanks
+
   return selected ? (
     <div className={classNames(className, 'flex flex-col space-y-1')}>
       <div className="flex space-x-2">
@@ -36,7 +45,14 @@ export function ImageInfo({
         </div>
         <div className="w-full space-x-2 break-words">
           <span className="font-bold">Command:</span>
-          <span>{selected.cmdline}</span>
+          <span>
+            {cmdlineWithSplits?.map((s, i) => (
+              <React.Fragment key={i}>
+                {s}
+                <wbr />
+              </React.Fragment>
+            ))}
+          </span>
         </div>
       </div>
     </div>
