@@ -324,8 +324,6 @@ export function Table({
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLTableRowElement>) => {
-      event.preventDefault()
-      event.stopPropagation()
       if (!tbodyRef.current) {
         return
       }
@@ -362,12 +360,18 @@ export function Table({
           break
         case 'ArrowRight':
           onToggleShowOverlay()
+          event.preventDefault()
+          event.stopPropagation()
           return
         case 'ArrowUp':
           sibling = currentRow?.previousElementSibling
+          event.preventDefault()
+          event.stopPropagation()
           break
         case 'ArrowDown':
           sibling = currentRow?.nextElementSibling
+          event.preventDefault()
+          event.stopPropagation()
           break
         default:
           break
