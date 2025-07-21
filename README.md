@@ -29,7 +29,9 @@ the utility script `import_report.sh path/to/qc/root`, where `path/to/qc/root` i
 containing index.html, js, py, etc. This will copy the report into the `sample/` directory,
 with some modifications to make it work with the dev server.
 
-You can change which report your targeting by setting the `VITE_SAMPLE_DATASETS` environment
+#### Switching between multiple test datasets
+
+You can change which report you're targeting by setting the `VITE_SAMPLE_DATASETS` environment
 variable. You can add it to `.env.development.local`:
 
 ```
