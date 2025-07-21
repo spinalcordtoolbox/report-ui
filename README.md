@@ -1,24 +1,59 @@
-# Spinal Cord Toolbox QC Report Generator
+# report-ui
 
-This package bundles the UI for [SCT QC reports](https://github.com/spinalcordtoolbox/spinalcordtoolbox/tree/master/spinalcordtoolbox/reports).
+This repository contains the necessary files to generate the `index.html` file used for 
+[SCT QC reports](https://github.com/spinalcordtoolbox/spinalcordtoolbox/tree/master/spinalcordtoolbox/reports).
 
-- [Generating reports](https://spinalcordtoolbox.com/stable/overview/concepts/inspecting-results-qc-fsleyes.html)
-- [Design document](https://github.com/spinalcordtoolbox/spinalcordtoolbox/wiki/Programming:-QC-Reports)
+## Using this repo
 
-## Development
+### Files and folders
 
-We use [Vite](https://vite.dev/) for building,
+This repo contains several subfolders:
+
+- `src/`: The source files for this project. If you want to add a feature or fix a bug, you should
+  take a look at the files in this directory.
+- `sample/default/`: This is a sample QC report dataset used for testing. 
+- `dist/`: DO NOT EDIT. This folder contains the _generated output files_ that get put into the
+  release of `report-ui`. These files come from the files in `src/`, so you should edit those instead.
+
+### Testing your changes
+
+0. Install [npm](https://www.npmjs.com) and [yarn](https://yarnpkg.com/getting-started/install)
+1. In the repo, run `yarn` to initialize the repo, install packages, etc.
+2. Next, run `yarn dev` to start a development server with hot module replacement (i.e. an "editable
+   install" in Python terms). It'll print a link you can click or copy into your browser.
+
+#### Testing using existing an existing QC report 
+
+Sometimes you need to run the development version against a report generated in SCT. To do so, use
+the utility script `import_report.sh path/to/qc/root`, where `path/to/qc/root` is the directory
+containing index.html, js, py, etc. This will copy the report into the `sample/` directory,
+with some modifications to make it work with the dev server.
+
+You can change which report your targeting by setting the `VITE_SAMPLE_DATASETS` environment
+variable. You can add it to `.env.development.local`:
+
+```
+VITE_SAMPLE_DATASETS=0f51622a-6059-4cfe-bedb-0a766e0c705e
+```
+
+Then run `yarn dev` as usual.
+
+### Building for production
+
+1. Run the command `yarn build`.
+2. Open the bundled index.html in your browser `:)` - it'll live in `dist/`
+
+Then, you can open the `index.html` file like normal to test your changes.
+
+----
+
+## Technical details (for developers)
+
+This repo uses use [Vite](https://vite.dev/) for building,
 [React](https://react.dev) to manage the DOM, and [tailwind](https://tailwindcss.com) for styling.
 [Typescript](https://www.typescriptlang.org) keeps our runtime errors to a minimum.
 
-### Installation
-
-0. Install [npm](https://www.npmjs.com) and [yarn](https://yarnpkg.com/getting-started/install)
-1. Clone the repository
-2. In the repo, run `yarn`
-3. Run a development server with hot module replacement with `yarn dev`. It'll print a link you can click or copy into your browser.
-
-### File bundling
+### Why do we bundle everything into one `index.html` file?
 
 Since a main use case for QC reports is offline generation and viewing, and since modern browsers
 don't trust filesystem resources without modifying the browser, we need a way to package
@@ -41,28 +76,8 @@ Inlining: style-CLOgedyW.css
 
 as the plugin runs.
 
-### Injecting datasets
+### How do datasets get injected after the `index.html` is build?
 
 This package is meant to be used in tandem with [SCT](https://github.com/spinalcordtoolbox/spinalcordtoolbox)'s
 QC report generator, which knows how to inject datasets into the `js/datasets.js` file.
 
-### Building for production
-
-1. `yarn build`
-2. Open the bundled index.html in your browser `:)` - it'll live in `dist/`
-
-### Developing against example data
-
-Sometimes you need to run the development version against a report generated in SCT. To do so, use
-the utility script `import_report.sh path_to_qc_root`, where `path_to_qc_root` is the directory
-containing index.html, js, py, etc. This will copy the report into the `sample/` directory,
-with some modifications to make it work with the dev server.
-
-You can change which report your targeting by setting the `VITE_SAMPLE_DATASETS` environment
-variable. You can add it to `.env.development.local`:
-
-```
-VITE_SAMPLE_DATASETS=0f51622a-6059-4cfe-bedb-0a766e0c705e
-```
-
-Then run `yarn dev` as usual.
