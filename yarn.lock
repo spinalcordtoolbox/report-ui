@@ -3225,6 +3225,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hotkeys-hook@npm:^5.2.3":
+  version: 5.2.3
+  resolution: "react-hotkeys-hook@npm:5.2.3"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10c0/24ba0eaa2195bb504628aec7813c9014370ae71ab1489359690fba00f04c06d189ed191be1fbcdc3d1b6119e3e6a4051342c0a30b7c5dacd7f7b8457a1672624
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^18.0.0":
   version: 18.3.1
   resolution: "react-is@npm:18.3.1"
@@ -3417,6 +3427,7 @@ __metadata:
     prettier-eslint: "npm:^16.3.0"
     react: "npm:19.1"
     react-dom: "npm:19.1"
+    react-hotkeys-hook: "npm:^5.2.3"
     tailwind-merge: "npm:^3.1.0"
     tailwindcss: "npm:^4.1.3"
     tw-animate-css: "npm:^1.2.5"

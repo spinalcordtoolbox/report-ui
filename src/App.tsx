@@ -1,15 +1,17 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
 
 import logoUrl from '@/assets/sct_logo.png'
-import { Table, TableState } from '@/components/Table'
+import Table, { TableState } from '@/components/Table'
 import Legend from '@/components/Legend'
 import Loading from '@/components/Loading'
 import { ImportExport } from '@/components/ImportExport'
+import useKeyboardShortcuts from '@/components/Table/useKeyboardShortcuts'
 import ImageDisplay, { FitMode } from '@/ImageDisplay'
 import { useDatasetSources } from '@/lib/hooks/useDatasetSources'
 
 import '@/util/devData'
+import { useTableState } from './components/Table/useTableState'
 
 export interface Dataset {
   id: string
@@ -58,6 +60,39 @@ function App() {
     setImageFitMode(imageFitMode === 'fit' ? 'full' : 'fit')
   }, [imageFitMode, setImageFitMode])
 
+  const { sorting, setSorting } = useTableState(initialTableState)
+
+  // freeze order when modifying data to prevent losing one's place on the list
+  const changeDatasets = useCallback((replaceDatasets: Dataset[]) => {
+    setSorting([{ id: 'position', desc: false }])
+
+    setDatasets(replaceDatasets)
+  }, [])
+
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  const focusSearch = useCallback(() => {
+    if (!searchRef.current) {
+      return
+    }
+
+    searchRef.current.focus()
+  }, [searchRef.current])
+
+  const toggleShowOverlay = () => setShowOverlay((o) => !o)
+  const tbodyRef = useRef<HTMLTableSectionElement>(null)
+
+  useKeyboardShortcuts(
+    datasets,
+    changeDatasets,
+    tbodyRef,
+    toggleImageFit,
+    toggleShowOverlay,
+    selected,
+    handleSelectRow,
+    focusSearch,
+  )
+
   /* Force a render cycle before loading goes away, to force unmounts */
   useEffect(() => {
     if (!loading) {
@@ -100,12 +135,14 @@ function App() {
         <div className="flex flex-col space-y-2 w-full lg:w-5/12 h-1/2 lg:h-full">
           <Legend />
           <Table
+            ref={tbodyRef}
             datasets={datasets}
+            selectedId={selected?.id}
             initialTableState={initialTableState}
-            onChangeDatasets={setDatasets}
             onSelectRow={handleSelectRow}
-            onToggleShowOverlay={() => setShowOverlay((o) => !o)}
-            onToggleImageFit={toggleImageFit}
+            sorting={sorting}
+            onChangeSorting={setSorting}
+            searchRef={searchRef}
           />
           <ImportExport
             datasets={datasets}
@@ -123,7 +160,7 @@ function App() {
           selected={selected}
           fitMode={imageFitMode}
           onChangeFitMode={setImageFitMode}
-          onToggleShowOverlay={() => setShowOverlay((o) => !o)}
+          onToggleShowOverlay={toggleShowOverlay}
         />
       </div>
     </>

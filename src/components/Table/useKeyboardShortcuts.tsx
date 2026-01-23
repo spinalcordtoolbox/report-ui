@@ -1,4 +1,6 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
+import { Options, useHotkeys } from 'react-hotkeys-hook'
+
 import { Dataset } from '@/App'
 import { replaceDataset } from '@/util/replace'
 
@@ -8,37 +10,41 @@ export default function useKeyboardShortcuts(
   tbodyRef: React.RefObject<HTMLTableSectionElement | null>,
   onToggleImageFit: () => void,
   onToggleShowOverlay: () => void,
+  selected: Dataset | undefined,
   onSelectRow: (id: string) => any,
   onFocusSearch: () => any,
 ) {
-  const cycleQc = (id: string) => {
-    const dataset = datasets.find((d) => d.id === id)
-    if (!dataset) {
-      console.error(`Dataset not found: ${id}`)
-      return
-    }
+  const cycleQc = useCallback(
+    (id: string) => {
+      const dataset = datasets.find((d) => d.id === id)
+      if (!dataset) {
+        console.error(`Dataset not found: ${id}`)
+        return
+      }
 
-    let nextQc
-    switch (dataset.qc) {
-      case '':
-        nextQc = '✅'
-        break
-      case '✅':
-        nextQc = '❌'
-        break
-      case '❌':
-        nextQc = '⚠️'
-        break
-      case '⚠️':
-        nextQc = ''
-        break
-      default:
-        nextQc = ''
-        break
-    }
+      let nextQc
+      switch (dataset.qc) {
+        case '':
+          nextQc = '✅'
+          break
+        case '✅':
+          nextQc = '❌'
+          break
+        case '❌':
+          nextQc = '⚠️'
+          break
+        case '⚠️':
+          nextQc = ''
+          break
+        default:
+          nextQc = ''
+          break
+      }
 
-    onChangeDatasets(replaceDataset(datasets, id, { qc: nextQc }))
-  }
+      onChangeDatasets(replaceDataset(datasets, id, { qc: nextQc }))
+    },
+    [datasets],
+  )
 
   const updateRank = useCallback(
     (id: string, rank: number) => {
@@ -52,90 +58,68 @@ export default function useKeyboardShortcuts(
     [datasets, onChangeDatasets],
   )
 
-  const keyDebug = useMemo(() => {
-    const params = new URLSearchParams(window.location.search)
-    return !!params.get('debug_keys')
-  }, [window.location.search])
-
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLTableRowElement>) => {
-      if (!tbodyRef.current) {
+  // handle moving up or down by one row
+  const handleSelectSibling = useCallback(
+    (up: boolean) => {
+      if (!tbodyRef.current || !selected) {
         return
       }
 
-      const row = event.currentTarget
+      const currentRow = tbodyRef.current.children.namedItem(selected.id)
 
-      const currentRow = tbodyRef.current.children.namedItem(row.id)
+      let sibling = up
+        ? currentRow?.previousElementSibling
+        : currentRow?.nextElementSibling
 
-      let sibling
-
-      if (keyDebug) {
-        console.log('===== Key event =====')
-        console.dir(event.key)
-        if (event.key.match(/\d/)) {
-          console.log(`${event.key} matches /\\d/`)
+      if (!sibling) {
+        // if none selected and up pressed, select last item
+        if (up) {
+          sibling = tbodyRef.current.lastElementChild
         } else {
-          console.log(`${event.key} does not match /\\d/`)
+          sibling = tbodyRef.current.firstElementChild
         }
-        console.log('=====')
+
+        // somehow still nothing?
+        if (!sibling) return
       }
 
-      if (event.key.match(/\d/)) {
-        updateRank(row.id, parseInt(event.key))
-      }
-
-      if (event.getModifierState('Control') || event.getModifierState('Meta')) {
-        if (event.key === 'k' || event.key === 'K') {
-          onFocusSearch()
-        }
-      }
-
-      switch (event.key) {
-        case 'f':
-        case 'F':
-          cycleQc(row.id)
-          break
-        case 'd':
-        case 'D':
-          onToggleImageFit()
-          break
-        case 'ArrowRight':
-          onToggleShowOverlay()
-          event.preventDefault()
-          event.stopPropagation()
-          return
-        case 'ArrowUp':
-          sibling = currentRow?.previousElementSibling
-          event.preventDefault()
-          event.stopPropagation()
-          break
-        case 'ArrowDown':
-          sibling = currentRow?.nextElementSibling
-          event.preventDefault()
-          event.stopPropagation()
-          break
-        case '/':
-          event.preventDefault()
-          event.stopPropagation()
-          onFocusSearch()
-          break
-        default:
-          break
-      }
-      if (!sibling) return
       ;(sibling as any).focus()
-
       onSelectRow(sibling.id)
     },
-    [
-      tbodyRef.current,
-      cycleQc,
-      updateRank,
-      onToggleShowOverlay,
-      onToggleImageFit,
-      keyDebug,
-    ],
+    [selected],
   )
 
-  return handleKeyDown
+  // respect keyboad format + prevent propagation
+  const options: Options = { useKey: true, preventDefault: true }
+
+  useHotkeys('up', () => handleSelectSibling(true), options, [selected])
+  useHotkeys('down', () => handleSelectSibling(false), options, [selected])
+  useHotkeys(
+    'f',
+    () => {
+      console.dir(selected)
+      if (!selected) return
+      cycleQc(selected.id)
+    },
+    options,
+    [selected, datasets],
+  )
+  // keys 0-9
+  Array(10)
+    .fill(0)
+    .forEach((_, i) => {
+      useHotkeys(
+        i.toString(),
+        () => {
+          if (!selected) return
+          updateRank(selected.id, i)
+        },
+        options,
+        [selected, datasets],
+      )
+    })
+
+  useHotkeys('mod+k, /', onFocusSearch, options)
+  useHotkeys('d', onToggleImageFit, options)
+  useHotkeys('right', onToggleShowOverlay, options)
 }
