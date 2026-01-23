@@ -4,7 +4,7 @@ import { Options, useHotkeys } from 'react-hotkeys-hook'
 import { Dataset } from '@/App'
 import { replaceDataset } from '@/util/replace'
 
-export default function useKeyboardShortcuts(
+export function useKeyboardShortcuts(
   datasets: Dataset[],
   onChangeDatasets: (replaceDatasets: Dataset[]) => void,
   tbodyRef: React.RefObject<HTMLTableSectionElement | null>,
