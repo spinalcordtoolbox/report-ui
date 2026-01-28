@@ -65,7 +65,8 @@ export function useKeyboardShortcuts(
         return
       }
 
-      const currentRow = selected && tbodyRef.current.children.namedItem(selected.id)
+      const currentRow =
+        selected && tbodyRef.current.children.namedItem(selected.id)
 
       let sibling = up
         ? currentRow?.previousElementSibling
@@ -92,8 +93,8 @@ export function useKeyboardShortcuts(
   // respect keyboad format + prevent propagation
   const options: Options = { useKey: true, preventDefault: true }
 
-  useHotkeys('up', () => handleSelectSibling(true), options, [selected])
-  useHotkeys('down', () => handleSelectSibling(false), options, [selected])
+  useHotkeys('up, j', () => handleSelectSibling(true), options, [selected])
+  useHotkeys('down, k', () => handleSelectSibling(false), options, [selected])
   useHotkeys(
     'f',
     () => {
