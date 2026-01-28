@@ -61,11 +61,11 @@ export function useKeyboardShortcuts(
   // handle moving up or down by one row
   const handleSelectSibling = useCallback(
     (up: boolean) => {
-      if (!tbodyRef.current || !selected) {
+      if (!tbodyRef.current) {
         return
       }
 
-      const currentRow = tbodyRef.current.children.namedItem(selected.id)
+      const currentRow = selected && tbodyRef.current.children.namedItem(selected.id)
 
       let sibling = up
         ? currentRow?.previousElementSibling
@@ -97,7 +97,6 @@ export function useKeyboardShortcuts(
   useHotkeys(
     'f',
     () => {
-      console.dir(selected)
       if (!selected) return
       cycleQc(selected.id)
     },
