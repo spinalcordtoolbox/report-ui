@@ -90,8 +90,11 @@ export function useKeyboardShortcuts(
     [selected],
   )
 
-  // respect keyboad format + prevent propagation
-  const options: Options = { useKey: true, preventDefault: true }
+  const options: Options = {
+    useKey: true, // respect keyboard format
+    preventDefault: true,
+    enableOnFormTags: ['radio', 'select'], // capture keys even on toggle buttons
+  }
 
   useHotkeys('up, j', () => handleSelectSibling(true), options, [selected])
   useHotkeys('down, k', () => handleSelectSibling(false), options, [selected])
