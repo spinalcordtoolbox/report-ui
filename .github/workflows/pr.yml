@@ -1,0 +1,61 @@
+
+name: Build package & sample QC report on PR
+
+on:
+  pull_request:
+    # paths:
+    #   - '**.js'
+    #   - '**.ts'
+    #   - '**.tsx'
+    types:
+      - opened
+      - synchronize
+
+concurrency: pr-${{ github.ref }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_url: ${{ steps.artifact-upload-step.outputs.artifact-url }}
+    steps:
+      - uses: actions/checkout@v5
+      # Needed based on the slightly non-standard yarn version we use
+      # See https://github.com/actions/setup-node/issues/899
+      - name: Enable Corepack before setting up Node
+        run: corepack enable
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Build
+        run: yarn build
+      - name: Create sample QC report
+        run: |
+            mkdir qc-report
+            cp -r dist/* qc-report/
+            cp -r sample/default/* qc-report/
+            sed -i 's%sample/default/%%g' qc-report/js/datasets.js
+      - name: Upload test QC report
+        id: artifact-upload-step
+        uses: actions/upload-artifact@v6
+        with:
+          name: qc-${{ github.event.pull_request.head.sha }}
+          path: qc-report/**/*
+  comment:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Comment on PR with link to artifact
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Test QC report built! You can download it [here](${{ needs.build.outputs.artifact_url }}).'
+            })
