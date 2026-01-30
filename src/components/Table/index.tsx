@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 import { flexRender, getFilteredRowModel, Updater } from '@tanstack/react-table'
 import {
@@ -15,9 +15,7 @@ import { Dataset } from '@/App'
 import ColumnSelect from '@/components/ColumnSelect'
 import SearchBox from '@/components/SearchBox'
 import Loading from '@/components/Loading'
-import useKeyboardShortcuts from '@/components/Table/useKeyboardShortcuts'
 import useTableLocalStorage from '@/components/Table/useTableLocalStorage'
-import useHandleOutsideKeydown from '@/components/Table/useHandleOutsideKeydown'
 
 import {
   TableState,
@@ -91,21 +89,23 @@ const DEFAULT_COLUMN_VISIBILITY: ColumnVisibility = {
 
 export type PropTypes = {
   datasets: Dataset[]
+  selectedId: string | undefined
   initialTableState: TableState | null
-  onChangeDatasets: (d: Dataset[]) => any
   onSelectRow: (id: string) => any
-  onToggleShowOverlay: () => void
-  onToggleImageFit: () => void
+  sorting: SortingState
+  onChangeSorting: React.Dispatch<React.SetStateAction<SortingState>>
+  searchRef: React.RefObject<any>
 }
 
-export function Table({
+function Table({
   datasets,
+  selectedId,
   initialTableState,
-  onChangeDatasets,
   onSelectRow,
-  onToggleShowOverlay,
-  onToggleImageFit,
-}: PropTypes) {
+  sorting,
+  onChangeSorting,
+  searchRef
+}: PropTypes, tbodyRef: React.ForwardedRef<HTMLTableSectionElement>) {
   // for datatable type
   const [columns] = useState([...defaultColumns])
   const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(
@@ -113,9 +113,6 @@ export function Table({
   )
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
     initialTableState?.columnOrder || [],
-  )
-  const [sorting, setSorting] = useState<SortingState>(
-    initialTableState?.sorting || [],
   )
   const [rowOrder, setRowOrder] = useState<RowOrder>(
     initialTableState?.rowOrder || {},
@@ -141,14 +138,14 @@ export function Table({
       rowFilter,
     }: TableState) => {
       setColumnOrder(columnOrder)
-      setSorting(sorting)
+      onChangeSorting(sorting)
       setRowOrder(rowOrder)
       setRowFilter(rowFilter)
       setColumnVisibility(columnVisibility)
     },
     [
       setColumnOrder,
-      setSorting,
+      onChangeSorting,
       setRowOrder,
       setRowFilter,
       setColumnVisibility,
@@ -164,9 +161,9 @@ export function Table({
 
   const sortByColumns = useCallback(
     (sortingState: Updater<SortingState>) => {
-      setSorting(sortingState)
+      onChangeSorting(sortingState)
     },
-    [setSorting],
+    [onChangeSorting],
   )
 
   const tableData: TableData[] = useMemo(
@@ -220,37 +217,6 @@ export function Table({
 
     setRowOrder(newRowOrder)
   }, [rows, rowOrder])
-
-  const tbodyRef = useRef<HTMLTableSectionElement>(null)
-
-  // freeze order when modifying data to prevent losing one's place on the list
-  const changeDatasets = useCallback((replaceDatasets: Dataset[]) => {
-    setSorting([{ id: 'position', desc: false }])
-
-    onChangeDatasets(replaceDatasets)
-  }, [])
-
-  const searchRef = useRef<HTMLInputElement>(null)
-
-  const focusSearch = useCallback(() => {
-    if (!searchRef.current) {
-      return
-    }
-
-    searchRef.current.focus()
-  }, [searchRef.current])
-
-  const handleKeyDown = useKeyboardShortcuts(
-    datasets,
-    changeDatasets,
-    tbodyRef,
-    onToggleImageFit,
-    onToggleShowOverlay,
-    onSelectRow,
-    focusSearch,
-  )
-
-  useHandleOutsideKeydown(tbodyRef)
 
   const leafColumns = dataTable.getLeftLeafColumns()
 
@@ -355,10 +321,9 @@ export function Table({
                 key={row.id}
                 id={row.id}
                 tabIndex={0}
-                onKeyDown={handleKeyDown}
                 onFocus={() => onSelectRow(row.id)}
                 onClick={() => onSelectRow(row.id)}
-                className="focus:bg-gray-300"
+                className={classNames("focus:bg-gray-300", row.id === selectedId ? "bg-gray-300" : null)}
                 autoFocus={i === 0}
               >
                 {row.getVisibleCells().map((cell, i) => (
@@ -380,3 +345,5 @@ export function Table({
     </>
   )
 }
+
+export default forwardRef(Table)
