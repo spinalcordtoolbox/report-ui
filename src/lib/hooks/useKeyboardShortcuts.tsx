@@ -96,8 +96,8 @@ export function useKeyboardShortcuts(
     enableOnFormTags: ['radio', 'select'], // capture keys even on toggle buttons
   }
 
-  useHotkeys('up, j', () => handleSelectSibling(true), options, [selected])
-  useHotkeys('down, k', () => handleSelectSibling(false), options, [selected])
+  useHotkeys('up, k', () => handleSelectSibling(true), options, [selected])
+  useHotkeys('down, j', () => handleSelectSibling(false), options, [selected])
   useHotkeys(
     'f',
     () => {
