@@ -32,9 +32,9 @@ export default function ImageDisplay({
         'flex flex-col flex-nowrap space-y-4 relative',
       )}
     >
-      <ImageOverlay className="w-full" fitMode={fitMode} {...overlayProps} />
+      <ImageOverlay className="w-full flex-shrink-0" fitMode={fitMode} {...overlayProps} />
       <ImageInfo
-        className="w-full"
+        className="w-full min-h-48 flex-shrink-1"
         selected={selected}
         onToggleShowOverlay={onToggleShowOverlay}
         fitMode={fitMode}
