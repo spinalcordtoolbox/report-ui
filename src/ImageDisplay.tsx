@@ -12,13 +12,16 @@ import { Dataset } from '@/App'
  * This is so tailwind can locate the class name correctly
  * See https://tailwindcss.com/docs/detecting-classes-in-source-files#dynamic-class-names
  */
-export const IMAGE_INFO_HEIGHT = 48
+const IMAGE_INFO_HEIGHT = 48
 const IMAGE_INFO_HEIGHT_CLASS = 'min-h-48'
-const IMAGE_DISPLAY_HEIGHT_CLASS = 'h-[calc(100%_-_--spacing(48))]'
+const IMAGE_INFO_SPACING = 4
+const IMAGE_INFO_SPACING_CLASS = 'space-y-4'
+const IMAGE_DISPLAY_HEIGHT_CLASS = 'h-[calc(100%_-_--spacing(52))]'
 
 // These essentially work as assertions, because TS will throw an error at build time if they don't match
 IMAGE_INFO_HEIGHT_CLASS === `min-h-${IMAGE_INFO_HEIGHT}`
-IMAGE_DISPLAY_HEIGHT_CLASS === `h-[calc(100%_-_--spacing(${IMAGE_INFO_HEIGHT}))]`
+IMAGE_DISPLAY_HEIGHT_CLASS === `h-[calc(100%_-_--spacing(${IMAGE_INFO_HEIGHT + IMAGE_INFO_SPACING}))]`
+IMAGE_INFO_SPACING_CLASS === `space-y-${IMAGE_INFO_SPACING}`
 
 export type FitMode = 'fit' | 'full'
 
@@ -42,7 +45,8 @@ export default function ImageDisplay({
     <div
       className={classNames(
         className,
-        'flex flex-col flex-nowrap space-y-4 relative',
+        'flex flex-col flex-nowrap relative',
+        IMAGE_INFO_SPACING_CLASS
       )}
     >
       <ImageOverlay
