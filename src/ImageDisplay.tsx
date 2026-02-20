@@ -13,13 +13,13 @@ import { Dataset } from '@/App'
  * See https://tailwindcss.com/docs/detecting-classes-in-source-files#dynamic-class-names
  */
 const IMAGE_INFO_HEIGHT = 48
-const IMAGE_INFO_HEIGHT_CLASS = 'h-48'
+const IMAGE_INFO_HEIGHT_CLASS = 'min-h-48'
 const IMAGE_INFO_SPACING = 4
 const IMAGE_INFO_SPACING_CLASS = 'space-y-4'
 const IMAGE_DISPLAY_HEIGHT_CLASS = 'h-[calc(100%_-_--spacing(52))]'
 
 // These essentially work as assertions, because TS will throw an error at build time if they don't match
-IMAGE_INFO_HEIGHT_CLASS === `h-${IMAGE_INFO_HEIGHT}`
+IMAGE_INFO_HEIGHT_CLASS === `min-h-${IMAGE_INFO_HEIGHT}`
 IMAGE_DISPLAY_HEIGHT_CLASS === `h-[calc(100%_-_--spacing(${IMAGE_INFO_HEIGHT + IMAGE_INFO_SPACING}))]`
 IMAGE_INFO_SPACING_CLASS === `space-y-${IMAGE_INFO_SPACING}`
 

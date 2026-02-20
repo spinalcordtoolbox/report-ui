@@ -38,12 +38,7 @@ export function ImageInfo({
         </Button>
         <RadioSelect fitMode={fitMode} onChangeFitMode={onChangeFitMode} />
       </div>
-      <div
-        className={classNames(
-          'w-full flex-grow-1',
-          'flex flex-col overflow-y-scroll overflow-x-clip p-2 border-gray-500 rounded-sm border-1',
-        )}
-      >
+      <div className="w-full flex flex-col overflow-y-scroll overflow-x-clip p-2 border-gray-500 rounded-sm border-1">
         <div className="space-x-2">
           <span className="font-bold">SCT version:</span>
           <span>{selected.sctVersion}</span>
