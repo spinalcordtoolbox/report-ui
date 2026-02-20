@@ -2429,6 +2429,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"idb-keyval@npm:^6.2.2":
+  version: 6.2.2
+  resolution: "idb-keyval@npm:6.2.2"
+  checksum: 10c0/b52f0d2937cc2ec9f1da536b0b5c0875af3043ca210714beaffead4ec1f44f2ad322220305fd024596203855224d9e3523aed83e971dfb62ddc21b5b1721aeef
+  languageName: node
+  linkType: hard
+
 "ignore@npm:^5.2.0, ignore@npm:^5.3.1":
   version: 5.3.2
   resolution: "ignore@npm:5.3.2"
@@ -3422,6 +3429,7 @@ __metadata:
     eslint-plugin-react-x: "npm:^1.28.0"
     file-saver: "npm:^2.0.5"
     globals: "npm:^15.15.0"
+    idb-keyval: "npm:^6.2.2"
     lucide-react: "npm:^0.487.0"
     prettier: "npm:^3.5.2"
     prettier-eslint: "npm:^16.3.0"

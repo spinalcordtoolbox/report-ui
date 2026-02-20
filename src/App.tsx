@@ -2,16 +2,16 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
 
 import logoUrl from '@/assets/sct_logo.png'
-import Table, { TableState } from '@/components/Table'
+import Table from '@/components/Table'
 import Legend from '@/components/Legend'
 import Loading from '@/components/Loading'
 import { ImportExport } from '@/components/ImportExport'
 import ImageDisplay, { FitMode } from '@/ImageDisplay'
 import { useDatasetSources } from '@/lib/hooks/useDatasetSources'
+import { useTableState } from '@/lib/hooks/useTableState'
 import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 
 import '@/util/devData'
-import { useTableState } from './components/Table/useTableState'
 
 export interface Dataset {
   id: string
@@ -51,20 +51,21 @@ function App() {
   )
 
   const [loading, setLoading] = useState(false)
-  const [initialTableState, setInitialTableState] = useState<TableState | null>(
-    null,
-  )
 
   const [imageFitMode, setImageFitMode] = useState<FitMode>('fit')
   const toggleImageFit = useCallback(() => {
     setImageFitMode(imageFitMode === 'fit' ? 'full' : 'fit')
   }, [imageFitMode, setImageFitMode])
 
-  const { sorting, setSorting } = useTableState(initialTableState)
+  const {
+    isLoading: isTableLoading,
+    tableState,
+    setTableState,
+  } = useTableState()
 
   // freeze order when modifying data to prevent losing one's place on the list
   const changeDatasets = useCallback((replaceDatasets: Dataset[]) => {
-    setSorting([{ id: 'position', desc: false }])
+    setTableState({ sorting: [{ id: 'position', desc: false }] })
 
     setDatasets(replaceDatasets)
   }, [])
@@ -138,17 +139,18 @@ function App() {
             ref={tbodyRef}
             datasets={datasets}
             selectedId={selected?.id}
-            initialTableState={initialTableState}
+            tableState={tableState}
+            onChangeTableState={setTableState}
             onSelectRow={handleSelectRow}
-            sorting={sorting}
-            onChangeSorting={setSorting}
             searchRef={searchRef}
+            isLoading={isTableLoading}
           />
           <ImportExport
             datasets={datasets}
+            tableState={tableState}
             onInitFileLoad={() => setLoading(true)}
             onSetDatasets={setDatasets}
-            onSetInitialTableState={setInitialTableState}
+            onSetTableState={setTableState}
           />
         </div>
 

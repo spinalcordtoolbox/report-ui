@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import { useLocalStorage } from '@uidotdev/usehooks'
 
 import { Dataset } from '@/App'
+import { useStorage } from '@/lib/hooks/useStorage'
 import { getConstants } from '@/util/constants'
 
 function cleanDataset(dataset: Dataset): Dataset {
@@ -29,18 +29,18 @@ export function useDatasetSources(): [
     getConstants()
   const initialData = INITIAL_DATASETS.map(cleanDataset)
 
-  const [localStorageDatasets, setDatasets] = useLocalStorage<Array<Dataset>>(
+  const [isLoading, storedDatasets, setDatasets] = useStorage<Array<Dataset>>(
     DATASETS_LOCAL_STORAGE_KEY,
     initialData,
   )
 
   /* Once, on app mount, check for changes in the datasets injected into the window, e.g., by
    * running refresh_qc_entries
-   * Overwrite localstorage with any changed values, preserving QC and Rank values
+   * Overwrite persistent storage with any changed values, preserving QC and Rank values
    */
   let initialized = false
   useEffect(() => {
-    if (initialized) {
+    if (initialized || isLoading) {
       return
     }
 
@@ -49,7 +49,7 @@ export function useDatasetSources(): [
         const [id, dataset] = pair
         let qc = ''
         let rank = null
-        const localMatch = localStorageDatasets.find((d) => d.id && d.id === id)
+        const localMatch = storedDatasets.find((d) => d.id && d.id === id)
         if (localMatch) {
           qc = localMatch.qc
           rank = localMatch.rank
@@ -68,7 +68,7 @@ export function useDatasetSources(): [
       setDatasets(mergedData)
       initialized = true
     })
-  }, [])
+  }, [isLoading, initialized])
 
-  return [localStorageDatasets, setDatasets]
+  return [storedDatasets, setDatasets]
 }

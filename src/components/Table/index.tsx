@@ -1,8 +1,14 @@
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  forwardRef,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import classNames from 'classnames'
 import { flexRender, getFilteredRowModel, Updater } from '@tanstack/react-table'
 import {
-  ColumnDef,
   ColumnOrderState,
   getCoreRowModel,
   getSortedRowModel,
@@ -15,7 +21,6 @@ import { Dataset } from '@/App'
 import ColumnSelect from '@/components/ColumnSelect'
 import SearchBox from '@/components/SearchBox'
 import Loading from '@/components/Loading'
-import useTableLocalStorage from '@/components/Table/useTableLocalStorage'
 
 import {
   TableState,
@@ -23,147 +28,65 @@ import {
   RowOrder,
   RowFilter,
 } from '@/components/Table/types'
+import { defaultColumns, TableStateUpdateFn } from '@/lib/hooks/useTableState'
 
 export type { TableState } from '@/components/Table/types'
-
-const defaultColumns: ColumnDef<Dataset>[] = [
-  {
-    accessorKey: 'date',
-    header: 'Date',
-  },
-  {
-    accessorKey: 'dataset',
-    header: 'Dataset',
-  },
-  {
-    accessorKey: 'subject',
-    header: 'Subject',
-  },
-  {
-    accessorKey: 'path',
-    header: 'Path',
-  },
-  {
-    accessorKey: 'inputFile',
-    header: 'File',
-  },
-  {
-    accessorKey: 'contrast',
-    header: 'Contrast',
-  },
-  {
-    accessorKey: 'command',
-    header: 'Function',
-  },
-  {
-    accessorKey: 'cmdline',
-    header: 'Function+Args',
-  },
-  {
-    accessorKey: 'rank',
-    header: 'Rank',
-  },
-  {
-    accessorKey: 'qc',
-    header: 'QC',
-  },
-  { accessorKey: 'position', enableHiding: true },
-]
 
 interface TableData extends Dataset {
   position: number
 }
 
-const DEFAULT_COLUMN_VISIBILITY: ColumnVisibility = {
-  date: true,
-  dataset: false,
-  subject: true,
-  path: false,
-  inputFile: true,
-  contrast: true,
-  command: true,
-  cmdline: false,
-  rank: false,
-  qc: true,
-}
-
 export type PropTypes = {
   datasets: Dataset[]
   selectedId: string | undefined
-  initialTableState: TableState | null
+  tableState: TableState
+  onChangeTableState: TableStateUpdateFn
+  isLoading: boolean
   onSelectRow: (id: string) => any
-  sorting: SortingState
-  onChangeSorting: React.Dispatch<React.SetStateAction<SortingState>>
   searchRef: React.RefObject<any>
 }
 
-function Table({
-  datasets,
-  selectedId,
-  initialTableState,
-  onSelectRow,
-  sorting,
-  onChangeSorting,
-  searchRef
-}: PropTypes, tbodyRef: React.ForwardedRef<HTMLTableSectionElement>) {
-  // for datatable type
-  const [columns] = useState([...defaultColumns])
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(
-    initialTableState?.columnVisibility || DEFAULT_COLUMN_VISIBILITY,
-  )
-  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
-    initialTableState?.columnOrder || [],
-  )
-  const [rowOrder, setRowOrder] = useState<RowOrder>(
-    initialTableState?.rowOrder || {},
-  )
-  const [rowFilter, setRowFilter] = useState<RowFilter>(
-    initialTableState?.rowFilter || '',
-  )
-
-  const tableState: TableState = {
-    columnOrder,
-    columnVisibility,
-    sorting,
-    rowOrder,
-    rowFilter,
-  }
-
-  const setTableState = useCallback(
-    ({
-      columnOrder,
-      columnVisibility,
-      sorting,
-      rowOrder,
-      rowFilter,
-    }: TableState) => {
-      setColumnOrder(columnOrder)
-      onChangeSorting(sorting)
-      setRowOrder(rowOrder)
-      setRowFilter(rowFilter)
-      setColumnVisibility(columnVisibility)
-    },
-    [
-      setColumnOrder,
-      onChangeSorting,
-      setRowOrder,
-      setRowFilter,
-      setColumnVisibility,
-    ],
-  )
-
-  const localStorageLoaded = useTableLocalStorage(
+function Table(
+  {
+    datasets,
+    selectedId,
+    onSelectRow,
     tableState,
-    initialTableState,
-    setTableState,
-    DEFAULT_COLUMN_VISIBILITY,
+    onChangeTableState,
+    isLoading,
+    searchRef,
+  }: PropTypes,
+  tbodyRef: React.ForwardedRef<HTMLTableSectionElement>,
+) {
+  const { columnOrder, columnVisibility, rowOrder, rowFilter, sorting } =
+    tableState
+
+  const [columns] = useState([...defaultColumns])
+
+  const sortByColumns = useCallback((sortingState: Updater<SortingState>) => {
+    onChangeTableState({ sorting: sortingState })
+  }, [])
+
+  const setColumnVisibility = useCallback(
+    (cv: SetStateAction<ColumnVisibility>) =>
+      onChangeTableState({ columnVisibility: cv }),
+    [],
   )
 
-  const sortByColumns = useCallback(
-    (sortingState: Updater<SortingState>) => {
-      onChangeSorting(sortingState)
-    },
-    [onChangeSorting],
+  const setColumnOrder = useCallback(
+    (co: SetStateAction<ColumnOrderState>) =>
+      onChangeTableState({ columnOrder: co }),
+    [],
+  )
+
+  const setRowOrder = useCallback(
+    (ro: SetStateAction<RowOrder>) => onChangeTableState({ rowOrder: ro }),
+    [],
+  )
+
+  const setRowFilter = useCallback(
+    (rf: SetStateAction<RowFilter>) => onChangeTableState({ rowFilter: rf }),
+    [],
   )
 
   const tableData: TableData[] = useMemo(
@@ -232,7 +155,7 @@ function Table({
     setRowFilter(steadySearchString)
   }, [steadySearchString])
 
-  if (!localStorageLoaded && !initialTableState) {
+  if (isLoading) {
     return (
       <div className="self-center mt-20">
         <Loading />
@@ -323,7 +246,10 @@ function Table({
                 tabIndex={0}
                 onFocus={() => onSelectRow(row.id)}
                 onClick={() => onSelectRow(row.id)}
-                className={classNames("focus:bg-gray-300", row.id === selectedId ? "bg-gray-300" : null)}
+                className={classNames(
+                  'focus:bg-gray-300',
+                  row.id === selectedId ? 'bg-gray-300' : null,
+                )}
                 autoFocus={i === 0}
               >
                 {row.getVisibleCells().map((cell, i) => (
