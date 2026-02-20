@@ -253,7 +253,7 @@ function Table({
           onChange={setSearchString}
         />
       </div>
-      <div className="overflow-y-scroll w-full overflow-x-scroll">
+      <div className="flex-grow-1 overflow-y-scroll w-full overflow-x-scroll">
         <table className="min-w-full border-1 border-gray-200 rounded-sm text-[10px] border-spacing-0 border-separate flex-1">
           <thead className="rounded-sm">
             {dataTable.getHeaderGroups().map((headerGroup) => (
