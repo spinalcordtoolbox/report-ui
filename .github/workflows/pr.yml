@@ -42,7 +42,7 @@ jobs:
         id: artifact-upload-step
         uses: actions/upload-artifact@v6
         with:
-          name: qc-${{ github.event.pull_request.head.sha }}
+          name: qc-${{ github.event.pull_request.head.ref }}-${{ github.event.pull_request.head.sha }}
           path: qc-report/**/*
   comment:
     runs-on: ubuntu-latest
