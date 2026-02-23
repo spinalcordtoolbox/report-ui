@@ -132,7 +132,7 @@ function App() {
           'flex flex-col flex-nowrap lg:flex-row lg:space-y-0 lg:space-x-4',
         )}
       >
-        <div className="flex flex-col space-y-2 w-full lg:w-5/12 h-1/2 lg:h-full">
+        <div className="flex flex-col space-y-2 w-full lg:w-5/12 h-1/2 lg:h-auto">
           <Legend />
           <Table
             ref={tbodyRef}
@@ -153,7 +153,7 @@ function App() {
         </div>
 
         <ImageDisplay
-          className="w-full lg:w-7/12 h-1/2 lg:h-full p-4"
+          className="w-full lg:w-7/12 h-1/2 lg:h-auto"
           backgroundImage={backgroundImage}
           overlayImage={overlayImage}
           showOverlay={showOverlay}
