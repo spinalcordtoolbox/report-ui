@@ -5,7 +5,7 @@ import {
   SortingState,
 } from '@tanstack/react-table'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 import {
   ColumnVisibility,
   RowFilter,

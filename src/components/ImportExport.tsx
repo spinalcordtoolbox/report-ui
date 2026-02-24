@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { saveAs } from 'file-saver'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 import Button from '@/components/Button'
 import { TableState } from '@/components/Table'
 import { YamlExport } from '@/components/YamlExport'
@@ -11,7 +11,6 @@ const LabelButton = Button<HTMLLabelElement>
 type PropTypes = {
   datasets: Dataset[]
   tableState: TableState
-  onInitFileLoad: () => any
   onSetDatasets: (d: Dataset[]) => any
   onSetTableState: (s: TableState) => any
 }
@@ -19,7 +18,6 @@ type PropTypes = {
 export function ImportExport({
   datasets,
   tableState,
-  onInitFileLoad,
   onSetDatasets,
   onSetTableState,
 }: PropTypes) {
@@ -46,14 +44,13 @@ export function ImportExport({
 
       const { datasets } = parsedObject
 
-      onInitFileLoad()
       onSetDatasets(datasets)
 
       if (parsedObject.tableState) {
         onSetTableState(parsedObject.tableState)
       }
     },
-    [onInitFileLoad, onSetTableState, onSetDatasets],
+    [onSetTableState, onSetDatasets],
   )
 
   const handleFileChosen = useCallback(

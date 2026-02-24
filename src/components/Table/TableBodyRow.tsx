@@ -2,7 +2,7 @@ import { HTMLAttributes, useCallback, useMemo } from 'react'
 import { flexRender, Row } from '@tanstack/react-table'
 import { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 import classNames from 'classnames'
 
 interface TableBodyRowProps extends HTMLAttributes<HTMLTableRowElement> {

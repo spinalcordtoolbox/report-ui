@@ -2,7 +2,7 @@ import { forwardRef } from 'react'
 import { Row, Table } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 import TableBodyRow from '@/components/Table/TableBodyRow'
 
 type PropTypes = {
@@ -14,7 +14,7 @@ type PropTypes = {
 
 function TableBody(
   { table, tableContainerRef, selectedId, onSelectRow }: PropTypes,
-  ref: React.RefObject<HTMLTableSectionElement>,
+  ref: React.ForwardedRef<HTMLTableSectionElement>,
 ) {
   const { rows } = table.getRowModel()
 
@@ -38,6 +38,7 @@ function TableBody(
         const row = rows[virtualRow.index] as Row<Dataset>
         return (
           <TableBodyRow
+            key={row.id}
             row={row}
             virtualRow={virtualRow}
             rowVirtualizer={rowVirtualizer}

@@ -18,7 +18,7 @@ import {
 } from '@tanstack/react-table'
 import { useDebounce } from '@uidotdev/usehooks'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 import ColumnSelect from '@/components/ColumnSelect'
 import SearchBox from '@/components/SearchBox'
 import Loading from '@/components/Loading'

@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { Options, useHotkeys } from 'react-hotkeys-hook'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 import { replaceDataset } from '@/util/replace'
 
 export function useKeyboardShortcuts(

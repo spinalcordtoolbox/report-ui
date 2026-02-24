@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 import { useStorage } from '@/lib/hooks/useStorage'
 import { getConstants } from '@/util/constants'
 

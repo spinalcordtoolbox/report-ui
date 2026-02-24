@@ -1,98 +1,29 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import classNames from 'classnames'
 
 import logoUrl from '@/assets/sct_logo.png'
-import Table from '@/components/Table'
 import Legend from '@/components/Legend'
 import Loading from '@/components/Loading'
-import { ImportExport } from '@/components/ImportExport'
 import ImageDisplay, { FitMode } from '@/ImageDisplay'
-import { useDatasetSources } from '@/lib/hooks/useDatasetSources'
-import { useTableState } from '@/lib/hooks/useTableState'
-import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 
 import '@/util/devData'
-
-export interface Dataset {
-  id: string
-  path: string
-  cmdline: string
-  command: string
-  sctVersion: string
-  dataset: string
-  subject: string
-  contrast: string
-  inputFile: string
-  plane: string
-  backgroundImage: string
-  overlayImage: string
-  date: string
-  rank: number | null
-  qc: string
-}
+import Datasets from './components/Datasets'
 
 function App() {
-  const [datasets, setDatasets] = useDatasetSources()
-
-  const [selected, setSelected] = useState<Dataset>()
-
   const [backgroundImage, setBackgroundImage] = useState('')
   const [overlayImage, setOverlayImage] = useState('')
   const [showOverlay, setShowOverlay] = useState(true)
-
-  const handleSelectRow = useCallback(
-    (id: string) => {
-      const dataset = datasets.find((r) => r.id == id)
-      setSelected(dataset)
-      setBackgroundImage(dataset?.backgroundImage ?? '')
-      setOverlayImage(dataset?.overlayImage ?? '')
-    },
-    [datasets],
-  )
+  const [displayCmdLine, setDisplayCmdLine] = useState<string>()
+  const [displaySctVersion, setDisplaySctVersion] = useState<string>()
 
   const [loading, setLoading] = useState(false)
 
   const [imageFitMode, setImageFitMode] = useState<FitMode>('fit')
   const toggleImageFit = useCallback(() => {
-    setImageFitMode(imageFitMode === 'fit' ? 'full' : 'fit')
-  }, [imageFitMode, setImageFitMode])
-
-  const {
-    isLoading: isTableLoading,
-    tableState,
-    setTableState,
-  } = useTableState()
-
-  // freeze order when modifying data to prevent losing one's place on the list
-  const changeDatasets = useCallback((replaceDatasets: Dataset[]) => {
-    setTableState({ sorting: [{ id: 'position', desc: false }] })
-
-    setDatasets(replaceDatasets)
+    setImageFitMode((f) => (f === 'fit' ? 'full' : 'fit'))
   }, [])
 
-  const searchRef = useRef<HTMLInputElement>(null)
-
-  const focusSearch = useCallback(() => {
-    if (!searchRef.current) {
-      return
-    }
-
-    searchRef.current.focus()
-  }, [searchRef.current])
-
   const toggleShowOverlay = () => setShowOverlay((o) => !o)
-  const tbodyRef = useRef<HTMLTableSectionElement>(null)
-
-  useKeyboardShortcuts(
-    datasets,
-    changeDatasets,
-    tbodyRef,
-    toggleImageFit,
-    toggleShowOverlay,
-    selected,
-    handleSelectRow,
-    focusSearch,
-  )
 
   /* Force a render cycle before loading goes away, to force unmounts */
   useEffect(() => {
@@ -135,22 +66,13 @@ function App() {
       >
         <div className="flex flex-col space-y-2 w-full lg:w-5/12 h-1/2 lg:h-auto">
           <Legend />
-          <Table
-            ref={tbodyRef}
-            datasets={datasets}
-            selectedId={selected?.id}
-            tableState={tableState}
-            onChangeTableState={setTableState}
-            onSelectRow={handleSelectRow}
-            searchRef={searchRef}
-            isLoading={isTableLoading}
-          />
-          <ImportExport
-            datasets={datasets}
-            tableState={tableState}
-            onInitFileLoad={() => setLoading(true)}
-            onSetDatasets={setDatasets}
-            onSetTableState={setTableState}
+          <Datasets
+            onToggleImageFit={toggleImageFit}
+            onToggleShowOverlay={toggleShowOverlay}
+            onSetBackgroundImage={setBackgroundImage}
+            onSetOverlayImage={setOverlayImage}
+            onSetDisplayCmdLine={setDisplayCmdLine}
+            onSetDisplaySctVersion={setDisplaySctVersion}
           />
         </div>
 
@@ -159,8 +81,8 @@ function App() {
           backgroundImage={backgroundImage}
           overlayImage={overlayImage}
           showOverlay={showOverlay}
-          cmdLine={selected?.cmdline}
-          sctVersion={selected?.sctVersion}
+          cmdLine={displayCmdLine}
+          sctVersion={displaySctVersion}
           fitMode={imageFitMode}
           onChangeFitMode={setImageFitMode}
           onToggleShowOverlay={toggleShowOverlay}
