@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Dataset } from '@/App'
 import { useStorage } from '@/lib/hooks/useStorage'
@@ -38,9 +38,9 @@ export function useDatasetSources(): [
    * running refresh_qc_entries
    * Overwrite persistent storage with any changed values, preserving QC and Rank values
    */
-  let initialized = false
+  const [isInitialized, setIsInitialized] = useState(false)
   useEffect(() => {
-    if (initialized || isLoading) {
+    if (isInitialized || isLoading) {
       return
     }
 
@@ -66,9 +66,9 @@ export function useDatasetSources(): [
       }, [])
 
       setDatasets(mergedData)
-      initialized = true
+      setIsInitialized(true)
     })
-  }, [isLoading, initialized])
+  }, [isLoading, isInitialized])
 
   return [storedDatasets, setDatasets]
 }

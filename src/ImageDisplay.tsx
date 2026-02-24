@@ -5,7 +5,6 @@ import {
   PropTypes as OverlayProps,
 } from '@/components/ImageOverlay'
 import { ImageInfo } from '@/components/ImageInfo'
-import { Dataset } from '@/App'
 
 /*
  * If you change the classes, change the integer to match, and vice versa
@@ -27,7 +26,8 @@ export type FitMode = 'fit' | 'full'
 
 interface PropTypes extends OverlayProps {
   className: string
-  selected?: Dataset
+  cmdLine?: string
+  sctVersion?: string
   onToggleShowOverlay: () => any
   fitMode: FitMode
   onChangeFitMode: (f: FitMode) => any
@@ -35,7 +35,8 @@ interface PropTypes extends OverlayProps {
 
 export default function ImageDisplay({
   className,
-  selected,
+  cmdLine,
+  sctVersion,
   onToggleShowOverlay,
   fitMode,
   onChangeFitMode,
@@ -56,7 +57,8 @@ export default function ImageDisplay({
       />
       <ImageInfo
         className={`w-full flex-shrink-1 ${IMAGE_INFO_HEIGHT_CLASS}`}
-        selected={selected}
+        cmdLine={cmdLine}
+        sctVersion={sctVersion}
         onToggleShowOverlay={onToggleShowOverlay}
         fitMode={fitMode}
         onChangeFitMode={onChangeFitMode}

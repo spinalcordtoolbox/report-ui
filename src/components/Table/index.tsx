@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import classNames from 'classnames'
@@ -29,6 +30,7 @@ import {
   RowFilter,
 } from '@/components/Table/types'
 import { defaultColumns, TableStateUpdateFn } from '@/lib/hooks/useTableState'
+import TableBody from './TableBody'
 
 export type { TableState } from '@/components/Table/types'
 
@@ -128,25 +130,37 @@ function Table(
   const { rows } = dataTable.getRowModel()
 
   useEffect(() => {
-    const newRowOrder = rows.reduce(
-      (memo, row, index) => ({
-        ...memo,
-        [row.id]: index,
-      }),
-      {},
-    )
+    let cancelled = false
 
-    if (JSON.stringify(rowOrder) === JSON.stringify(newRowOrder)) return
+    const computeRowOrder = async () => {
+      const newRowOrder = rows.reduce(
+        (memo, row, index) => ({
+          ...memo,
+          [row.id]: index,
+        }),
+        {},
+      )
 
-    setRowOrder(newRowOrder)
+      if (cancelled) return
+      if (JSON.stringify(rowOrder) === JSON.stringify(newRowOrder)) return
+
+      setRowOrder(newRowOrder)
+    }
+
+    // for some reason the async function was still blocking
+    const timer = setTimeout(computeRowOrder, 0)
+
+    return () => {
+      clearTimeout(timer)
+    }
   }, [rows, rowOrder])
 
-  const leafColumns = dataTable.getLeftLeafColumns()
+  // const leafColumns = dataTable.getLeftLeafColumns()
 
-  const columnSizes = useMemo(
-    () => leafColumns.map((c) => c.getSize()),
-    [leafColumns],
-  )
+  // const columnSizes = useMemo(
+  //   () => leafColumns.map((c) => c.getSize()),
+  //   [leafColumns],
+  // )
 
   const [searchString, setSearchString] = useState('')
   const steadySearchString = useDebounce(searchString, 300)
@@ -154,6 +168,8 @@ function Table(
   useEffect(() => {
     setRowFilter(steadySearchString)
   }, [steadySearchString])
+
+  const containerRef = useRef<HTMLDivElement>(null)
 
   if (isLoading) {
     return (
@@ -176,7 +192,10 @@ function Table(
           onChange={setSearchString}
         />
       </div>
-      <div className="flex-grow-1 overflow-y-scroll w-full overflow-x-scroll">
+      <div
+        ref={containerRef}
+        className="w-full flex-grow-1 overflow-y-scroll overflow-x-scroll"
+      >
         <table className="min-w-full border-1 border-gray-200 rounded-sm text-[10px] border-spacing-0 border-separate flex-1">
           <thead className="rounded-sm">
             {dataTable.getHeaderGroups().map((headerGroup) => (
@@ -238,34 +257,13 @@ function Table(
                 : 'No data loaded'}
             </caption>
           )}
-          <tbody ref={tbodyRef}>
-            {rows.map((row, i) => (
-              <tr
-                key={row.id}
-                id={row.id}
-                tabIndex={0}
-                onFocus={() => onSelectRow(row.id)}
-                onClick={() => onSelectRow(row.id)}
-                className={classNames(
-                  'focus:bg-gray-300',
-                  row.id === selectedId ? 'bg-gray-300' : null,
-                )}
-                autoFocus={i === 0}
-              >
-                {row.getVisibleCells().map((cell, i) => (
-                  <td
-                    key={cell.id}
-                    className="p-2 border-gray-200 border-1 text-wrap overflow-hidden min-w-4 break-words"
-                    style={{
-                      maxWidth: Math.min(columnSizes[i], 400) || 400,
-                    }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
+          <TableBody
+            ref={tbodyRef}
+            table={dataTable}
+            tableContainerRef={containerRef}
+            selectedId={selectedId}
+            onSelectRow={onSelectRow}
+          />
         </table>
       </div>
     </>

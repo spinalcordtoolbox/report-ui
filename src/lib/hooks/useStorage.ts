@@ -26,7 +26,11 @@ export function useStorage<T>(
 
   // whenever the value changes, eventually save it to IndexedDB
   useEffect(() => {
-    setSavingPromise((p) => p.then(() => set(key, current)))
+    const saveStateAsync = async () => {
+      setSavingPromise((p) => p.then(() => set(key, current)))
+    }
+
+    saveStateAsync()
   }, [current])
 
   return [isLoading, current, setCurrent]

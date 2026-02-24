@@ -159,7 +159,8 @@ function App() {
           backgroundImage={backgroundImage}
           overlayImage={overlayImage}
           showOverlay={showOverlay}
-          selected={selected}
+          cmdLine={selected?.cmdline}
+          sctVersion={selected?.sctVersion}
           fitMode={imageFitMode}
           onChangeFitMode={setImageFitMode}
           onToggleShowOverlay={toggleShowOverlay}
