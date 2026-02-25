@@ -9,7 +9,6 @@ import { Dataset } from '@/components/Datasets'
 import {
   ColumnVisibility,
   RowFilter,
-  RowOrder,
   TableState,
 } from '@/components/Table/types'
 import { useStorage } from '@/lib/hooks/useStorage'
@@ -95,10 +94,6 @@ export function useTableState(): ReturnType {
   const [isLoadingColumnOrder, columnOrder, setColumnOrder] =
     useStorage<ColumnOrderState>(`${TABLE_LOCAL_STORAGE_KEY}-column-order`, [])
 
-  const [isLoadingRowOrder, rowOrder, setRowOrder] = useStorage<RowOrder>(
-    `${TABLE_LOCAL_STORAGE_KEY}-row-order`,
-    {},
-  )
   const [isLoadingRowFilter, rowFilter, setRowFilter] = useStorage<RowFilter>(
     `${TABLE_LOCAL_STORAGE_KEY}-row-filter`,
     '',
@@ -112,7 +107,6 @@ export function useTableState(): ReturnType {
   const isLoading =
     isLoadingColumnVisibility ||
     isLoadingColumnOrder ||
-    isLoadingRowOrder ||
     isLoadingRowFilter ||
     isLoadingSorting
 
@@ -120,7 +114,6 @@ export function useTableState(): ReturnType {
     columnOrder,
     columnVisibility,
     sorting,
-    rowOrder,
     rowFilter,
   }
 
@@ -129,7 +122,6 @@ export function useTableState(): ReturnType {
       columnOrder,
       columnVisibility,
       sorting,
-      rowOrder,
       rowFilter,
     }: TableStateUpdater) => {
       if (columnOrder) {
@@ -137,9 +129,6 @@ export function useTableState(): ReturnType {
       }
       if (sorting) {
         setSorting(sorting)
-      }
-      if (rowOrder) {
-        setRowOrder(rowOrder)
       }
       if (rowFilter) {
         setRowFilter(rowFilter)
@@ -151,7 +140,6 @@ export function useTableState(): ReturnType {
     [
       setColumnOrder,
       setSorting,
-      setRowOrder,
       setRowFilter,
       setColumnVisibility,
     ],

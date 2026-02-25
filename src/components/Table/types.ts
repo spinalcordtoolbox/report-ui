@@ -13,9 +13,6 @@ export type ColumnVisibility = {
   qc: boolean
 }
 
-export type RowOrder = {
-  [key: string]: number
-}
 
 export type RowFilter = string
 
@@ -23,6 +20,5 @@ export interface TableState {
   columnOrder: ColumnOrderState
   columnVisibility: ColumnVisibility
   sorting: SortingState
-  rowOrder: RowOrder
   rowFilter: RowFilter
 }

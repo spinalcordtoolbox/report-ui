@@ -2,15 +2,14 @@ import { useCallback } from 'react'
 import { Options, useHotkeys } from 'react-hotkeys-hook'
 
 import { Dataset } from '@/components/Datasets'
-import { replaceDataset } from '@/util/replace'
 
 export function useKeyboardShortcuts(
   datasets: Dataset[],
-  onChangeDatasets: (replaceDatasets: Dataset[]) => void,
+  onChangeDataset: (id: string, replaceDatasets: Partial<Dataset>) => void,
   tbodyRef: React.RefObject<HTMLTableSectionElement | null>,
   onToggleImageFit: () => void,
   onToggleShowOverlay: () => void,
-  selected: Dataset | undefined,
+  selectedId: string | undefined,
   onSelectRow: (id: string) => any,
   onFocusSearch: () => any,
 ) {
@@ -41,22 +40,19 @@ export function useKeyboardShortcuts(
           break
       }
 
-      onChangeDatasets(replaceDataset(datasets, id, { qc: nextQc }))
+      onChangeDataset(id, { qc: nextQc })
     },
     [datasets],
   )
 
-  const updateRank = useCallback(
-    (id: string, rank: number) => {
-      if (!(rank >= 0 && rank <= 9)) {
-        console.error(`Invalid rank set for ${id}: ${rank}`)
-        return
-      }
+  const updateRank = useCallback((id: string, rank: number) => {
+    if (!(rank >= 0 && rank <= 9)) {
+      console.error(`Invalid rank set for ${id}: ${rank}`)
+      return
+    }
 
-      onChangeDatasets(replaceDataset(datasets, id, { rank }))
-    },
-    [datasets, onChangeDatasets],
-  )
+    onChangeDataset(id, { rank })
+  }, [])
 
   // handle moving up or down by one row
   const handleSelectSibling = useCallback(
@@ -65,8 +61,9 @@ export function useKeyboardShortcuts(
         return
       }
 
-      const currentRow =
-        selected && tbodyRef.current.children.namedItem(selected.id)
+      const currentRow = selectedId
+        ? tbodyRef.current.children.namedItem(selectedId)
+        : null
 
       let sibling = up
         ? currentRow?.previousElementSibling
@@ -87,7 +84,7 @@ export function useKeyboardShortcuts(
       ;(sibling as any).focus()
       onSelectRow(sibling.id)
     },
-    [selected],
+    [selectedId],
   )
 
   const options: Options = {
@@ -96,16 +93,16 @@ export function useKeyboardShortcuts(
     enableOnFormTags: ['radio', 'select'], // capture keys even on toggle buttons
   }
 
-  useHotkeys('up, k', () => handleSelectSibling(true), options, [selected])
-  useHotkeys('down, j', () => handleSelectSibling(false), options, [selected])
+  useHotkeys('up, k', () => handleSelectSibling(true), options, [selectedId])
+  useHotkeys('down, j', () => handleSelectSibling(false), options, [selectedId])
   useHotkeys(
     'f',
     () => {
-      if (!selected) return
-      cycleQc(selected.id)
+      if (!selectedId) return
+      cycleQc(selectedId)
     },
     options,
-    [selected, datasets],
+    [selectedId, datasets],
   )
   // keys 0-9
   Array(10)
@@ -114,11 +111,11 @@ export function useKeyboardShortcuts(
       useHotkeys(
         i.toString(),
         () => {
-          if (!selected) return
-          updateRank(selected.id, i)
+          if (!selectedId) return
+          updateRank(selectedId, i)
         },
         options,
-        [selected, datasets],
+        [selectedId, datasets],
       )
     })
 

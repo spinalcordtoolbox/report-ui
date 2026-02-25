@@ -1,11 +1,10 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import Table from '@/components/Table'
 import { ImportExport } from '@/components/ImportExport'
 
 import { useTableState } from '@/lib/hooks/useTableState'
 import { useDatasetSources } from '@/lib/hooks/useDatasetSources'
-import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 
 export interface Dataset {
   id: string
@@ -31,7 +30,9 @@ interface PropTypes {
   onSetBackgroundImage: React.Dispatch<React.SetStateAction<string>>
   onSetOverlayImage: React.Dispatch<React.SetStateAction<string>>
   onSetDisplayCmdLine: React.Dispatch<React.SetStateAction<string | undefined>>
-  onSetDisplaySctVersion: React.Dispatch<React.SetStateAction<string | undefined>>
+  onSetDisplaySctVersion: React.Dispatch<
+    React.SetStateAction<string | undefined>
+  >
 }
 
 function Datasets({
@@ -40,7 +41,7 @@ function Datasets({
   onSetBackgroundImage,
   onSetOverlayImage,
   onSetDisplayCmdLine,
-  onSetDisplaySctVersion
+  onSetDisplaySctVersion,
 }: PropTypes) {
   const [datasets, setDatasets] = useDatasetSources()
 
@@ -49,13 +50,6 @@ function Datasets({
     tableState,
     setTableState,
   } = useTableState()
-
-  // freeze order when modifying data to prevent losing one's place on the list
-  const changeDatasets = useCallback((replaceDatasets: Dataset[]) => {
-    setTableState({ sorting: [{ id: 'position', desc: false }] })
-
-    setDatasets(replaceDatasets)
-  }, [])
 
   const [selected, setSelected] = useState<Dataset>()
 
@@ -71,39 +65,17 @@ function Datasets({
     [datasets],
   )
 
-  const tbodyRef = useRef<HTMLTableSectionElement>(null)
-
-  const searchRef = useRef<HTMLInputElement>(null)
-
-  const focusSearch = useCallback(() => {
-    if (!searchRef.current) {
-      return
-    }
-
-    searchRef.current.focus()
-  }, [searchRef.current])
-
-  useKeyboardShortcuts(
-    datasets,
-    changeDatasets,
-    tbodyRef,
-    onToggleImageFit,
-    onToggleShowOverlay,
-    selected,
-    handleSelectRow,
-    focusSearch,
-  )
-
   return (
     <>
       <Table
-        ref={tbodyRef}
         datasets={datasets}
+        onChangeDatasets={setDatasets}
         selectedId={selected?.id}
         tableState={tableState}
         onChangeTableState={setTableState}
         onSelectRow={handleSelectRow}
-        searchRef={searchRef}
+        onToggleImageFit={onToggleImageFit}
+        onToggleShowOverlay={onToggleShowOverlay}
         isLoading={isTableLoading}
       />
       <ImportExport

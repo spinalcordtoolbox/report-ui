@@ -1,9 +1,7 @@
 import {
-  forwardRef,
   SetStateAction,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -26,46 +24,46 @@ import Loading from '@/components/Loading'
 import {
   TableState,
   ColumnVisibility,
-  RowOrder,
   RowFilter,
 } from '@/components/Table/types'
 import { defaultColumns, TableStateUpdateFn } from '@/lib/hooks/useTableState'
 import TableBody from './TableBody'
+import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
+import { replaceDatasetState } from '@/util/replace'
 
 export type { TableState } from '@/components/Table/types'
 
-interface TableData extends Dataset {
-  position: number
-}
-
 export type PropTypes = {
   datasets: Dataset[]
+  onChangeDatasets: React.Dispatch<React.SetStateAction<Dataset[]>>
   selectedId: string | undefined
   tableState: TableState
   onChangeTableState: TableStateUpdateFn
   isLoading: boolean
   onSelectRow: (id: string) => any
-  searchRef: React.RefObject<any>
+  onToggleImageFit: () => void
+  onToggleShowOverlay: () => void
 }
 
-function Table(
-  {
-    datasets,
-    selectedId,
-    onSelectRow,
-    tableState,
-    onChangeTableState,
-    isLoading,
-    searchRef,
-  }: PropTypes,
-  tbodyRef: React.ForwardedRef<HTMLTableSectionElement>,
-) {
-  const { columnOrder, columnVisibility, rowOrder, rowFilter, sorting } =
-    tableState
+function Table({
+  datasets,
+  onChangeDatasets,
+  selectedId,
+  onSelectRow,
+  tableState,
+  onChangeTableState,
+  isLoading,
+  onToggleImageFit,
+  onToggleShowOverlay,
+}: PropTypes) {
+  const { columnOrder, columnVisibility, rowFilter, sorting } = tableState
 
   const [columns] = useState([...defaultColumns])
 
+  const [manualSort, setManualSort] = useState(true)
+
   const sortByColumns = useCallback((sortingState: Updater<SortingState>) => {
+    setManualSort(false)
     onChangeTableState({ sorting: sortingState })
   }, [])
 
@@ -81,27 +79,13 @@ function Table(
     [],
   )
 
-  const setRowOrder = useCallback(
-    (ro: SetStateAction<RowOrder>) => onChangeTableState({ rowOrder: ro }),
-    [],
-  )
-
   const setRowFilter = useCallback(
     (rf: SetStateAction<RowFilter>) => onChangeTableState({ rowFilter: rf }),
     [],
   )
 
-  const tableData: TableData[] = useMemo(
-    () =>
-      datasets.map((dataset) => ({
-        ...dataset,
-        position: rowOrder[dataset.id],
-      })),
-    [datasets, rowOrder],
-  )
-
   const dataTable = useReactTable<Dataset>({
-    data: tableData,
+    data: datasets,
     columns,
     defaultColumn: {
       minSize: 20,
@@ -116,6 +100,7 @@ function Table(
       sorting,
       globalFilter: rowFilter,
     },
+    manualSorting: manualSort,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -129,38 +114,59 @@ function Table(
 
   const { rows } = dataTable.getRowModel()
 
-  useEffect(() => {
-    let cancelled = false
+  const changeDataset = useCallback(
+    (id: string, replaceDataset: Partial<Dataset>) => {
+      /*
+       * Freeze order when modifying data to prevent losing one's place on the list.
+       * To achieve this, we switch to manualSorting, using the current sorted
+       * rows from getSortedRowModel as our ordered list
+       */
+      if (tableState.sorting.length > 0) {
+        const { rows: sortedRows } = dataTable.getSortedRowModel()
 
-    const computeRowOrder = async () => {
-      const newRowOrder = rows.reduce(
-        (memo, row, index) => ({
-          ...memo,
-          [row.id]: index,
-        }),
-        {},
-      )
+        /*
+         * This is a little tricky: replaceDatasetState returns an updater function,
+         * which takes an array of datasets and replaces a single one, and
+         * which we want to run on the *sorted* rows
+         */
+        onChangeDatasets(
+          replaceDatasetState(
+            id,
+            replaceDataset,
+          )(sortedRows.map((r) => r.original)),
+        )
+        setManualSort(true)
 
-      if (cancelled) return
-      if (JSON.stringify(rowOrder) === JSON.stringify(newRowOrder)) return
+        return
+      }
 
-      setRowOrder(newRowOrder)
+      onChangeDatasets(replaceDatasetState(id, replaceDataset))
+    },
+    [tableState.sorting],
+  )
+
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  const focusSearch = useCallback(() => {
+    if (!searchRef.current) {
+      return
     }
 
-    // for some reason the async function was still blocking
-    const timer = setTimeout(computeRowOrder, 0)
+    searchRef.current.focus()
+  }, [searchRef.current])
 
-    return () => {
-      clearTimeout(timer)
-    }
-  }, [rows, rowOrder])
+  const tbodyRef = useRef<HTMLTableSectionElement>(null)
 
-  // const leafColumns = dataTable.getLeftLeafColumns()
-
-  // const columnSizes = useMemo(
-  //   () => leafColumns.map((c) => c.getSize()),
-  //   [leafColumns],
-  // )
+  useKeyboardShortcuts(
+    datasets,
+    changeDataset,
+    tbodyRef,
+    onToggleImageFit,
+    onToggleShowOverlay,
+    selectedId,
+    onSelectRow,
+    focusSearch,
+  )
 
   const [searchString, setSearchString] = useState('')
   const steadySearchString = useDebounce(searchString, 300)
@@ -270,4 +276,4 @@ function Table(
   )
 }
 
-export default forwardRef(Table)
+export default Table
