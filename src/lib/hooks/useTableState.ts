@@ -18,6 +18,7 @@ export const defaultColumns: ColumnDef<Dataset>[] = [
   {
     accessorKey: 'date',
     header: 'Date',
+    size: 120,
   },
   {
     accessorKey: 'dataset',
@@ -50,10 +51,12 @@ export const defaultColumns: ColumnDef<Dataset>[] = [
   {
     accessorKey: 'rank',
     header: 'Rank',
+    size: 60,
   },
   {
     accessorKey: 'qc',
     header: 'QC',
+    size: 60,
   },
   { accessorKey: 'position', enableHiding: true },
 ]
@@ -137,12 +140,7 @@ export function useTableState(): ReturnType {
         setColumnVisibility(columnVisibility)
       }
     },
-    [
-      setColumnOrder,
-      setSorting,
-      setRowFilter,
-      setColumnVisibility,
-    ],
+    [setColumnOrder, setSorting, setRowFilter, setColumnVisibility],
   )
 
   return { isLoading, tableState, setTableState }

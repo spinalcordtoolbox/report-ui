@@ -34,16 +34,20 @@ function TableBodyRow({
       id={row.id}
       tabIndex={0}
       className={classNames(
+        'flex absolute w-full border-b',
         'focus:bg-gray-300',
         isSelected ? 'bg-gray-300' : null,
       )}
+      style={{
+        transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
+      }}
     >
       {row.getVisibleCells().map((cell) => (
         <td
           key={cell.id}
-          className="p-2 border-gray-200 border-1 text-wrap overflow-hidden min-w-4 break-words"
+          className="p-2 border-gray-200 border-r text-wrap overflow-hidden h-12 min-w-4 break-words"
           style={{
-            maxWidth: Math.min(cell.column.getSize(), 400) || 400,
+            width: Math.min(cell.column.getSize(), 400) || 400,
           }}
         >
           {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -1,10 +1,4 @@
-import {
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
 import { flexRender, getFilteredRowModel, Updater } from '@tanstack/react-table'
 import {
@@ -200,23 +194,23 @@ function Table({
       </div>
       <div
         ref={containerRef}
-        className="w-full flex-grow-1 overflow-y-scroll overflow-x-scroll"
+        className="w-full h-[480px] relative overflow-auto flex-grow-1"
       >
-        <table className="min-w-full border-1 border-gray-200 rounded-sm text-[10px] border-spacing-0 border-separate flex-1">
-          <thead className="rounded-sm">
+        <table className="min-w-full rounded-sm text-[10px] grid flex-1">
+          <thead className="rounded-sm grid sticky top-0 z-10">
             {dataTable.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={headerGroup.id} className="flex w-full">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="sticky top-0 bg-gray-300 text-left"
+                    className="flex bg-gray-300 text-left"
                     style={{
                       width: header.getSize(),
                     }}
                   >
                     <div
                       className={classNames(
-                        'h-full relative p-2 py-3 flex flex-row flex-nowrap items-center',
+                        'h-full w-full relative p-2 py-3 flex flex-row flex-nowrap items-center',
                         'cursor-pointer hover:bg-gray-50/50 transition-colors select-none',
                       )}
                       onClick={header.column.getToggleSortingHandler()}

@@ -33,7 +33,13 @@ function TableBody(
   })
 
   return (
-    <tbody ref={ref}>
+    <tbody
+      ref={ref}
+      className="grid relative w-full"
+      style={{
+        height: `${rowVirtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
+      }}
+    >
       {rowVirtualizer.getVirtualItems().map((virtualRow, i) => {
         const row = rows[virtualRow.index] as Row<Dataset>
         return (
