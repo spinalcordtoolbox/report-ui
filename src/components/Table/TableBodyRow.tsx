@@ -45,7 +45,7 @@ function TableBodyRow({
       {row.getVisibleCells().map((cell) => (
         <td
           key={cell.id}
-          className="p-2 border-gray-200 border-r text-wrap overflow-hidden h-12 min-w-4 break-words"
+          className="flex-grow-1 p-2 border-gray-200 border-r text-wrap overflow-hidden h-12 min-w-4 break-words"
           style={{
             width: Math.min(cell.column.getSize(), 400) || 400,
           }}

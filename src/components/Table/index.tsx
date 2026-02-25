@@ -95,6 +95,7 @@ function Table({
       globalFilter: rowFilter,
     },
     manualSorting: manualSort,
+    enableColumnResizing: true,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -195,16 +196,16 @@ function Table({
       </div>
       <div
         ref={containerRef}
-        className="w-full h-[480px] relative overflow-auto flex-grow-1"
+        className="max-w-full h-[480px] relative overflow-y-auto overflow-x-scroll flex-grow-1"
       >
-        <table className="min-w-full rounded-sm text-[10px] grid flex-1">
+        <table className="rounded-sm text-[10px] grid flex-1 w-full">
           <thead className="rounded-sm grid sticky top-0 z-10">
             {dataTable.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="flex w-full">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="flex bg-gray-300 text-left"
+                    className="flex-grow-1 flex bg-gray-300 text-left"
                     style={{
                       width: header.getSize(),
                     }}
