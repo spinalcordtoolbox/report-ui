@@ -123,20 +123,21 @@ function Table({
          * which takes an array of datasets and replaces a single one, and
          * which we want to run on the *sorted* rows
          */
+        setManualSort(true)
+        onChangeTableState({ sorting: [] })
         onChangeDatasets(
           replaceDatasetState(
             id,
             replaceDataset,
           )(sortedRows.map((r) => r.original)),
         )
-        setManualSort(true)
 
         return
       }
 
       onChangeDatasets(replaceDatasetState(id, replaceDataset))
     },
-    [tableState.sorting],
+    [JSON.stringify(tableState.sorting)],
   )
 
   const searchRef = useRef<HTMLInputElement>(null)
