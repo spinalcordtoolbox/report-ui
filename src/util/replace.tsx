@@ -1,7 +1,7 @@
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 
 // replace an object in an immutable array, returning a new array with idx replaced by object
-export const replace = <T,>(
+const replace = <T,>(
   array: Array<T>,
   idx: number,
   object: T,
@@ -14,12 +14,11 @@ export const replace = <T,>(
     return item
   })
 
-export function replaceDataset(
-  datasets: Dataset[],
-  id: string,
-  updateArgs: Partial<Dataset>,
-): Dataset[] {
-  const idx = datasets.findIndex((d) => d.id === id)
-  const dataset = datasets[idx]
-  return replace(datasets, idx, { ...dataset, ...updateArgs })
-}
+/* Generate an updater function that replaces a single dataset from the state array */
+export const replaceDatasetState =
+  (id: string, updateArgs: Partial<Dataset>) => (datasets: Dataset[]) => {
+    const idx = datasets.findIndex((d) => d.id === id)
+    const dataset = datasets[idx]
+
+    return replace(datasets, idx, { ...dataset, ...updateArgs })
+  }

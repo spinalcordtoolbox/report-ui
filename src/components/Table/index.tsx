@@ -1,8 +1,7 @@
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react'
+import { SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
 import { flexRender, getFilteredRowModel, Updater } from '@tanstack/react-table'
 import {
-  ColumnDef,
   ColumnOrderState,
   getCoreRowModel,
   getSortedRowModel,
@@ -11,172 +10,76 @@ import {
 } from '@tanstack/react-table'
 import { useDebounce } from '@uidotdev/usehooks'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 import ColumnSelect from '@/components/ColumnSelect'
 import SearchBox from '@/components/SearchBox'
 import Loading from '@/components/Loading'
-import useTableLocalStorage from '@/components/Table/useTableLocalStorage'
 
 import {
   TableState,
   ColumnVisibility,
-  RowOrder,
   RowFilter,
 } from '@/components/Table/types'
+import { defaultColumns, TableStateUpdateFn } from '@/lib/hooks/useTableState'
+import TableBody from './TableBody'
+import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
+import { replaceDatasetState } from '@/util/replace'
 
 export type { TableState } from '@/components/Table/types'
 
-const defaultColumns: ColumnDef<Dataset>[] = [
-  {
-    accessorKey: 'date',
-    header: 'Date',
-  },
-  {
-    accessorKey: 'dataset',
-    header: 'Dataset',
-  },
-  {
-    accessorKey: 'subject',
-    header: 'Subject',
-  },
-  {
-    accessorKey: 'path',
-    header: 'Path',
-  },
-  {
-    accessorKey: 'inputFile',
-    header: 'File',
-  },
-  {
-    accessorKey: 'contrast',
-    header: 'Contrast',
-  },
-  {
-    accessorKey: 'command',
-    header: 'Function',
-  },
-  {
-    accessorKey: 'cmdline',
-    header: 'Function+Args',
-  },
-  {
-    accessorKey: 'rank',
-    header: 'Rank',
-  },
-  {
-    accessorKey: 'qc',
-    header: 'QC',
-  },
-  { accessorKey: 'position', enableHiding: true },
-]
-
-interface TableData extends Dataset {
-  position: number
-}
-
-const DEFAULT_COLUMN_VISIBILITY: ColumnVisibility = {
-  date: true,
-  dataset: false,
-  subject: true,
-  path: false,
-  inputFile: true,
-  contrast: true,
-  command: true,
-  cmdline: false,
-  rank: false,
-  qc: true,
-}
-
 export type PropTypes = {
   datasets: Dataset[]
+  onChangeDatasets: React.Dispatch<React.SetStateAction<Dataset[]>>
   selectedId: string | undefined
-  initialTableState: TableState | null
+  tableState: TableState
+  onChangeTableState: TableStateUpdateFn
+  isLoading: boolean
   onSelectRow: (id: string) => any
-  sorting: SortingState
-  onChangeSorting: React.Dispatch<React.SetStateAction<SortingState>>
-  searchRef: React.RefObject<any>
+  onToggleImageFit: () => void
+  onToggleShowOverlay: () => void
 }
 
 function Table({
   datasets,
+  onChangeDatasets,
   selectedId,
-  initialTableState,
   onSelectRow,
-  sorting,
-  onChangeSorting,
-  searchRef
-}: PropTypes, tbodyRef: React.ForwardedRef<HTMLTableSectionElement>) {
-  // for datatable type
+  tableState,
+  onChangeTableState,
+  isLoading,
+  onToggleImageFit,
+  onToggleShowOverlay,
+}: PropTypes) {
+  const { columnOrder, columnVisibility, rowFilter, sorting } = tableState
+
   const [columns] = useState([...defaultColumns])
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(
-    initialTableState?.columnVisibility || DEFAULT_COLUMN_VISIBILITY,
-  )
-  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
-    initialTableState?.columnOrder || [],
-  )
-  const [rowOrder, setRowOrder] = useState<RowOrder>(
-    initialTableState?.rowOrder || {},
-  )
-  const [rowFilter, setRowFilter] = useState<RowFilter>(
-    initialTableState?.rowFilter || '',
+
+  const [manualSort, setManualSort] = useState(true)
+
+  const sortByColumns = useCallback((sortingState: Updater<SortingState>) => {
+    setManualSort(false)
+    onChangeTableState({ sorting: sortingState })
+  }, [])
+
+  const setColumnVisibility = useCallback(
+    (cv: SetStateAction<ColumnVisibility>) =>
+      onChangeTableState({ columnVisibility: cv }),
+    [],
   )
 
-  const tableState: TableState = {
-    columnOrder,
-    columnVisibility,
-    sorting,
-    rowOrder,
-    rowFilter,
-  }
-
-  const setTableState = useCallback(
-    ({
-      columnOrder,
-      columnVisibility,
-      sorting,
-      rowOrder,
-      rowFilter,
-    }: TableState) => {
-      setColumnOrder(columnOrder)
-      onChangeSorting(sorting)
-      setRowOrder(rowOrder)
-      setRowFilter(rowFilter)
-      setColumnVisibility(columnVisibility)
-    },
-    [
-      setColumnOrder,
-      onChangeSorting,
-      setRowOrder,
-      setRowFilter,
-      setColumnVisibility,
-    ],
+  const setColumnOrder = useCallback(
+    (co: SetStateAction<ColumnOrderState>) =>
+      onChangeTableState({ columnOrder: co }),
+    [],
   )
 
-  const localStorageLoaded = useTableLocalStorage(
-    tableState,
-    initialTableState,
-    setTableState,
-    DEFAULT_COLUMN_VISIBILITY,
-  )
-
-  const sortByColumns = useCallback(
-    (sortingState: Updater<SortingState>) => {
-      onChangeSorting(sortingState)
-    },
-    [onChangeSorting],
-  )
-
-  const tableData: TableData[] = useMemo(
-    () =>
-      datasets.map((dataset) => ({
-        ...dataset,
-        position: rowOrder[dataset.id],
-      })),
-    [datasets, rowOrder],
+  const setRowFilter = useCallback(
+    (rf: SetStateAction<RowFilter>) => onChangeTableState({ rowFilter: rf }),
+    [],
   )
 
   const dataTable = useReactTable<Dataset>({
-    data: tableData,
+    data: datasets,
     columns,
     defaultColumn: {
       minSize: 20,
@@ -191,6 +94,8 @@ function Table({
       sorting,
       globalFilter: rowFilter,
     },
+    manualSorting: manualSort,
+    enableColumnResizing: true,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -204,25 +109,59 @@ function Table({
 
   const { rows } = dataTable.getRowModel()
 
-  useEffect(() => {
-    const newRowOrder = rows.reduce(
-      (memo, row, index) => ({
-        ...memo,
-        [row.id]: index,
-      }),
-      {},
-    )
+  const changeDataset = useCallback(
+    (id: string, replaceDataset: Partial<Dataset>) => {
+      /*
+       * Freeze order when modifying data to prevent losing one's place on the list.
+       * To achieve this, we switch to manualSorting, using the current sorted
+       * rows from getSortedRowModel as our ordered list
+       */
+      if (tableState.sorting.length > 0) {
+        const { rows: sortedRows } = dataTable.getSortedRowModel()
 
-    if (JSON.stringify(rowOrder) === JSON.stringify(newRowOrder)) return
+        /*
+         * This is a little tricky: replaceDatasetState returns an updater function,
+         * which takes an array of datasets and replaces a single one, and
+         * which we want to run on the *sorted* rows
+         */
+        setManualSort(true)
+        onChangeTableState({ sorting: [] })
+        onChangeDatasets(
+          replaceDatasetState(
+            id,
+            replaceDataset,
+          )(sortedRows.map((r) => r.original)),
+        )
 
-    setRowOrder(newRowOrder)
-  }, [rows, rowOrder])
+        return
+      }
 
-  const leafColumns = dataTable.getLeftLeafColumns()
+      onChangeDatasets(replaceDatasetState(id, replaceDataset))
+    },
+    [JSON.stringify(tableState.sorting)],
+  )
 
-  const columnSizes = useMemo(
-    () => leafColumns.map((c) => c.getSize()),
-    [leafColumns],
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  const focusSearch = useCallback(() => {
+    if (!searchRef.current) {
+      return
+    }
+
+    searchRef.current.focus()
+  }, [searchRef.current])
+
+  const tbodyRef = useRef<HTMLTableSectionElement>(null)
+
+  useKeyboardShortcuts(
+    datasets,
+    changeDataset,
+    tbodyRef,
+    onToggleImageFit,
+    onToggleShowOverlay,
+    selectedId,
+    onSelectRow,
+    focusSearch,
   )
 
   const [searchString, setSearchString] = useState('')
@@ -232,7 +171,9 @@ function Table({
     setRowFilter(steadySearchString)
   }, [steadySearchString])
 
-  if (!localStorageLoaded && !initialTableState) {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  if (isLoading) {
     return (
       <div className="self-center mt-20">
         <Loading />
@@ -253,22 +194,25 @@ function Table({
           onChange={setSearchString}
         />
       </div>
-      <div className="flex-grow-1 overflow-y-scroll w-full overflow-x-scroll">
-        <table className="min-w-full border-1 border-gray-200 rounded-sm text-[10px] border-spacing-0 border-separate flex-1">
-          <thead className="rounded-sm">
+      <div
+        ref={containerRef}
+        className="max-w-full h-[480px] relative overflow-y-auto overflow-x-scroll flex-grow-1"
+      >
+        <table className="rounded-sm text-[10px] grid flex-1 w-full">
+          <thead className="rounded-sm grid sticky top-0 z-10">
             {dataTable.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={headerGroup.id} className="flex w-full">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="sticky top-0 bg-gray-300 text-left"
+                    className="flex-grow-1 flex bg-gray-300 text-left"
                     style={{
                       width: header.getSize(),
                     }}
                   >
                     <div
                       className={classNames(
-                        'h-full relative p-2 py-3 flex flex-row flex-nowrap items-center',
+                        'h-full w-full relative p-2 py-3 flex flex-row flex-nowrap items-center',
                         'cursor-pointer hover:bg-gray-50/50 transition-colors select-none',
                       )}
                       onClick={header.column.getToggleSortingHandler()}
@@ -315,35 +259,17 @@ function Table({
                 : 'No data loaded'}
             </caption>
           )}
-          <tbody ref={tbodyRef}>
-            {rows.map((row, i) => (
-              <tr
-                key={row.id}
-                id={row.id}
-                tabIndex={0}
-                onFocus={() => onSelectRow(row.id)}
-                onClick={() => onSelectRow(row.id)}
-                className={classNames("focus:bg-gray-300", row.id === selectedId ? "bg-gray-300" : null)}
-                autoFocus={i === 0}
-              >
-                {row.getVisibleCells().map((cell, i) => (
-                  <td
-                    key={cell.id}
-                    className="p-2 border-gray-200 border-1 text-wrap overflow-hidden min-w-4 break-words"
-                    style={{
-                      maxWidth: Math.min(columnSizes[i], 400) || 400,
-                    }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
+          <TableBody
+            ref={tbodyRef}
+            table={dataTable}
+            tableContainerRef={containerRef}
+            selectedId={selectedId}
+            onSelectRow={onSelectRow}
+          />
         </table>
       </div>
     </>
   )
 }
 
-export default forwardRef(Table)
+export default Table

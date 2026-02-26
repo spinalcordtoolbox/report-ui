@@ -1,38 +1,32 @@
 import { useCallback } from 'react'
 import { saveAs } from 'file-saver'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 import Button from '@/components/Button'
 import { TableState } from '@/components/Table'
 import { YamlExport } from '@/components/YamlExport'
-import { getConstants } from '@/util/constants'
 
 const LabelButton = Button<HTMLLabelElement>
 
 type PropTypes = {
   datasets: Dataset[]
-  onInitFileLoad: () => any
+  tableState: TableState
   onSetDatasets: (d: Dataset[]) => any
-  onSetInitialTableState: (s: TableState) => any
+  onSetTableState: (s: TableState) => any
 }
 
 export function ImportExport({
   datasets,
-  onInitFileLoad,
+  tableState,
   onSetDatasets,
-  onSetInitialTableState,
+  onSetTableState,
 }: PropTypes) {
   const exportAll = useCallback(() => {
-    const tableState = localStorage.getItem(
-      getConstants().TABLE_LOCAL_STORAGE_KEY,
-    )
-    const tableJson = tableState ? JSON.parse(tableState) : null
-
     const blob = new Blob(
       [
         JSON.stringify({
           datasets,
-          ...{ ...(tableJson ? { tableState: tableJson } : {}) },
+          tableState,
         }),
       ],
       { type: 'application/json' },
@@ -50,14 +44,13 @@ export function ImportExport({
 
       const { datasets } = parsedObject
 
-      onInitFileLoad()
       onSetDatasets(datasets)
 
       if (parsedObject.tableState) {
-        onSetInitialTableState(parsedObject.tableState)
+        onSetTableState(parsedObject.tableState)
       }
     },
-    [onInitFileLoad, onSetInitialTableState, onSetDatasets],
+    [onSetTableState, onSetDatasets],
   )
 
   const handleFileChosen = useCallback(

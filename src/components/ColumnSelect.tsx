@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Column } from '@tanstack/react-table'
 import classNames from 'classnames'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 
 export default function ColumnSelect({
   columns,

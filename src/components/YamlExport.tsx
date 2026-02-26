@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 import YAML, { Document, YAMLMap, YAMLSeq } from 'yaml'
 import { saveAs } from 'file-saver'
 
-import { Dataset } from '@/App'
+import { Dataset } from '@/components/Datasets'
 import Button from '@/components/Button'
 
 type SegType =
