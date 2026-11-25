@@ -4,7 +4,7 @@ import { Options, useHotkeys } from 'react-hotkeys-hook'
 import { Dataset } from '@/components/Datasets'
 
 export function useKeyboardShortcuts(
-  datasets: Dataset[],
+  datasetsSorted: Dataset[],
   onChangeDataset: (id: string, replaceDatasets: Partial<Dataset>) => void,
   onToggleImageFit: () => void,
   onToggleShowOverlay: () => void,
@@ -14,7 +14,7 @@ export function useKeyboardShortcuts(
 ) {
   const cycleQc = useCallback(
     (id: string) => {
-      const dataset = datasets.find((d) => d.id === id)
+      const dataset = datasetsSorted.find((d) => d.id === id)
       if (!dataset) {
         console.error(`Dataset not found: ${id}`)
         return
@@ -41,7 +41,7 @@ export function useKeyboardShortcuts(
 
       onChangeDataset(id, { qc: nextQc })
     },
-    [datasets],
+    [datasetsSorted],
   )
 
   const updateRank = useCallback((id: string, rank: number) => {
@@ -64,7 +64,7 @@ export function useKeyboardShortcuts(
       lastMoveRef.current = timeStamp
 
       const idx = selectedId
-        ? datasets.findIndex((d) => d.id == selectedId)
+        ? datasetsSorted.findIndex((d) => d.id == selectedId)
         : -1
 
       let siblingIdx = up ? idx - 1 : idx + 1
@@ -77,16 +77,16 @@ export function useKeyboardShortcuts(
        * in TableBody to actually focus the corresponding DOM element
        */
       if (siblingIdx < 0) {
-        siblingIdx = datasets.length - 1
-      } else if (siblingIdx >= datasets.length) {
+        siblingIdx = datasetsSorted.length - 1
+      } else if (siblingIdx >= datasetsSorted.length) {
         siblingIdx = 0
       }
 
-      const sibling = datasets[siblingIdx]
+      const sibling = datasetsSorted[siblingIdx]
 
       onSelectRow(sibling.id)
     },
-    [selectedId, JSON.stringify(datasets)],
+    [selectedId, JSON.stringify(datasetsSorted)],
   )
 
   const options: Options = {
@@ -114,7 +114,7 @@ export function useKeyboardShortcuts(
       cycleQc(selectedId)
     },
     options,
-    [selectedId, datasets],
+    [selectedId, cycleQc],
   )
   // keys 0-9
   Array(10)
@@ -127,7 +127,7 @@ export function useKeyboardShortcuts(
           updateRank(selectedId, i)
         },
         options,
-        [selectedId, datasets],
+        [selectedId, updateRank],
       )
     })
 

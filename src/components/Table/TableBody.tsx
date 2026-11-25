@@ -8,7 +8,7 @@ import TableBodyRow from '@/components/Table/TableBodyRow'
 type PropTypes = {
   table: Table<Dataset>
   tableContainerRef: React.RefObject<HTMLDivElement | null>
-  datasets: Dataset[]
+  datasetsSorted: Dataset[]
   selectedId: string | undefined
   onSelectRow: (id: string) => any
 }
@@ -16,7 +16,7 @@ type PropTypes = {
 function TableBody({
   table,
   tableContainerRef,
-  datasets,
+  datasetsSorted,
   selectedId,
   onSelectRow,
 }: PropTypes) {
@@ -44,7 +44,7 @@ function TableBody({
     if (!ref.current || !selectedId) return
 
     /* Make sure virtual row is actually in view so the DOM element exists */
-    const selectedIdx = datasets.findIndex((d) => d.id === selectedId)
+    const selectedIdx = datasetsSorted.findIndex((d) => d.id === selectedId)
     rowVirtualizer.scrollToIndex(selectedIdx)
 
     const selectedElement = ref.current.querySelector<HTMLTableRowElement>(
@@ -56,7 +56,7 @@ function TableBody({
     }
 
     selectedElement.focus()
-  }, [selectedId, datasets])
+  }, [selectedId, datasetsSorted])
 
   return (
     <tbody
