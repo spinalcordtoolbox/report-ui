@@ -151,12 +151,9 @@ function Table({
     searchRef.current.focus()
   }, [searchRef.current])
 
-  const tbodyRef = useRef<HTMLTableSectionElement>(null)
-
   useKeyboardShortcuts(
     datasets,
     changeDataset,
-    tbodyRef,
     onToggleImageFit,
     onToggleShowOverlay,
     selectedId,
@@ -260,9 +257,9 @@ function Table({
             </caption>
           )}
           <TableBody
-            ref={tbodyRef}
             table={dataTable}
             tableContainerRef={containerRef}
+            datasets={datasets}
             selectedId={selectedId}
             onSelectRow={onSelectRow}
           />
