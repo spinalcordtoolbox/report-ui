@@ -12,6 +12,7 @@ function cleanDataset(dataset: Dataset): Dataset {
   }
 }
 
+/* id is the SHA-1 of path:cmdline:date */
 async function generateId(d: Dataset): Promise<[id: string, d: Dataset]> {
   const encoder = new TextEncoder()
   const data = encoder.encode(`${d.path}:${d.cmdline}:${d.date}`)
@@ -24,6 +25,7 @@ async function generateId(d: Dataset): Promise<[id: string, d: Dataset]> {
 export function useDatasetSources(): [
   Dataset[],
   React.Dispatch<React.SetStateAction<Dataset[]>>,
+  boolean,
 ] {
   const { DATASETS_LOCAL_STORAGE_KEY, INITIAL_DATASETS, DATASETS_PATH_PREFIX } =
     getConstants()
@@ -70,5 +72,5 @@ export function useDatasetSources(): [
     })
   }, [isLoading, isInitialized])
 
-  return [storedDatasets, setDatasets]
+  return [storedDatasets, setDatasets, isInitialized]
 }
