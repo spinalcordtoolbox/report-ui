@@ -117,7 +117,7 @@ function Table({
   const { rows } = dataTable.getRowModel()
   const datasetsSorted = useMemo(
     () => dataTable.getSortedRowModel().rows.map((r) => r.original),
-    [tableState.sorting],
+    [tableState.sorting, datasets],
   )
 
   const changeDataset = useCallback(
