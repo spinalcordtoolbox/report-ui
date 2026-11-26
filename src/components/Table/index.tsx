@@ -27,6 +27,7 @@ import {
   ColumnVisibility,
   RowFilter,
 } from '@/components/Table/types'
+import allKeywordsFilter from '@/components/Table/filter'
 import { defaultColumns, TableStateUpdateFn } from '@/lib/hooks/useTableState'
 import TableBody from './TableBody'
 import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
@@ -111,7 +112,7 @@ function Table({
     onSortingChange: sortByColumns,
     getRowId: (row) => row.id,
     getFilteredRowModel: getFilteredRowModel(),
-    globalFilterFn: 'includesString',
+    globalFilterFn: allKeywordsFilter,
   })
 
   const { rows } = dataTable.getRowModel()
