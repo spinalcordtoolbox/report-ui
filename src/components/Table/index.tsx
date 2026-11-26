@@ -1,4 +1,11 @@
-import { SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import classNames from 'classnames'
 import { flexRender, getFilteredRowModel, Updater } from '@tanstack/react-table'
 import {
@@ -108,6 +115,10 @@ function Table({
   })
 
   const { rows } = dataTable.getRowModel()
+  const datasetsSorted = useMemo(
+    () => dataTable.getSortedRowModel().rows.map((r) => r.original),
+    [tableState.sorting, datasets],
+  )
 
   const changeDataset = useCallback(
     (id: string, replaceDataset: Partial<Dataset>) => {
@@ -151,12 +162,9 @@ function Table({
     searchRef.current.focus()
   }, [searchRef.current])
 
-  const tbodyRef = useRef<HTMLTableSectionElement>(null)
-
   useKeyboardShortcuts(
-    datasets,
+    datasetsSorted,
     changeDataset,
-    tbodyRef,
     onToggleImageFit,
     onToggleShowOverlay,
     selectedId,
@@ -260,9 +268,9 @@ function Table({
             </caption>
           )}
           <TableBody
-            ref={tbodyRef}
             table={dataTable}
             tableContainerRef={containerRef}
+            datasetsSorted={datasetsSorted}
             selectedId={selectedId}
             onSelectRow={onSelectRow}
           />

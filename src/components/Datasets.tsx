@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import Table from '@/components/Table'
 import { ImportExport } from '@/components/ImportExport'
@@ -43,7 +43,7 @@ function Datasets({
   onSetDisplayCmdLine,
   onSetDisplaySctVersion,
 }: PropTypes) {
-  const [datasets, setDatasets] = useDatasetSources()
+  const [datasets, setDatasets, isDataLoaded] = useDatasetSources()
 
   const {
     isLoading: isTableLoading,
@@ -64,6 +64,16 @@ function Datasets({
     },
     [datasets],
   )
+
+  const [datasetFirstSelected, setDatasetFirstSelected] = useState(false)
+  useEffect(() => {
+    if (datasetFirstSelected || !isDataLoaded) {
+      return
+    }
+
+    handleSelectRow(datasets?.[0]?.id)
+    setDatasetFirstSelected(true)
+  }, [datasets, isDataLoaded, datasetFirstSelected])
 
   return (
     <>

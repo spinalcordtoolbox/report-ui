@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { Row, Table } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 
@@ -8,14 +8,18 @@ import TableBodyRow from '@/components/Table/TableBodyRow'
 type PropTypes = {
   table: Table<Dataset>
   tableContainerRef: React.RefObject<HTMLDivElement | null>
+  datasetsSorted: Dataset[]
   selectedId: string | undefined
   onSelectRow: (id: string) => any
 }
 
-function TableBody(
-  { table, tableContainerRef, selectedId, onSelectRow }: PropTypes,
-  ref: React.ForwardedRef<HTMLTableSectionElement>,
-) {
+function TableBody({
+  table,
+  tableContainerRef,
+  datasetsSorted,
+  selectedId,
+  onSelectRow,
+}: PropTypes) {
   const { rows } = table.getRowModel()
 
   // Important: Keep the row virtualizer in the lowest component possible to avoid unnecessary re-renders.
@@ -29,8 +33,30 @@ function TableBody(
       navigator.userAgent.indexOf('Firefox') === -1
         ? (element) => element?.getBoundingClientRect().height
         : undefined,
-    overscan: 5,
+    overscan: 10,
   })
+
+  const ref = useRef<HTMLTableSectionElement>(null)
+
+  /* On any change in selected row, ensure the selected row is being rendered by the virtualizer,
+   * then focus that row */
+  useLayoutEffect(() => {
+    if (!ref.current || !selectedId) return
+
+    /* Make sure virtual row is actually in view so the DOM element exists */
+    const selectedIdx = datasetsSorted.findIndex((d) => d.id === selectedId)
+    rowVirtualizer.scrollToIndex(selectedIdx)
+
+    const selectedElement = ref.current.querySelector<HTMLTableRowElement>(
+      '#' + CSS.escape(selectedId),
+    )
+
+    if (!selectedElement) {
+      return
+    }
+
+    selectedElement.focus()
+  }, [selectedId, datasetsSorted])
 
   return (
     <tbody
@@ -58,4 +84,4 @@ function TableBody(
   )
 }
 
-export default forwardRef(TableBody)
+export default TableBody

@@ -1,12 +1,11 @@
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 import { Options, useHotkeys } from 'react-hotkeys-hook'
 
 import { Dataset } from '@/components/Datasets'
 
 export function useKeyboardShortcuts(
-  datasets: Dataset[],
+  datasetsSorted: Dataset[],
   onChangeDataset: (id: string, replaceDatasets: Partial<Dataset>) => void,
-  tbodyRef: React.RefObject<HTMLTableSectionElement | null>,
   onToggleImageFit: () => void,
   onToggleShowOverlay: () => void,
   selectedId: string | undefined,
@@ -15,7 +14,7 @@ export function useKeyboardShortcuts(
 ) {
   const cycleQc = useCallback(
     (id: string) => {
-      const dataset = datasets.find((d) => d.id === id)
+      const dataset = datasetsSorted.find((d) => d.id === id)
       if (!dataset) {
         console.error(`Dataset not found: ${id}`)
         return
@@ -42,7 +41,7 @@ export function useKeyboardShortcuts(
 
       onChangeDataset(id, { qc: nextQc })
     },
-    [datasets],
+    [datasetsSorted],
   )
 
   const updateRank = useCallback((id: string, rank: number) => {
@@ -54,37 +53,40 @@ export function useKeyboardShortcuts(
     onChangeDataset(id, { rank })
   }, [])
 
+  const REPEAT_INTERVAL_MS = 150
+  const lastMoveRef = useRef(0)
+
   // handle moving up or down by one row
   const handleSelectSibling = useCallback(
-    (up: boolean) => {
-      if (!tbodyRef.current) {
-        return
+    (up: boolean, repeat: boolean, timeStamp: number) => {
+      // throttle keypresses
+      if (repeat && timeStamp - lastMoveRef.current < REPEAT_INTERVAL_MS) return
+      lastMoveRef.current = timeStamp
+
+      const idx = selectedId
+        ? datasetsSorted.findIndex((d) => d.id == selectedId)
+        : -1
+
+      let siblingIdx = up ? idx - 1 : idx + 1
+
+      /* Wrap top and bottom of list: if none selected and up pressed, select last item, and
+       * vice versa for down.
+       * Note: we can't use the DOM (e.g., tbodyRef children) here because of row virtualization.
+       * The rendered firstElementChild will be in the middle of the list depending on where
+       * we're scrolled to. Instead, we just select a dataset, and depend on a layout effect
+       * in TableBody to actually focus the corresponding DOM element
+       */
+      if (siblingIdx < 0) {
+        siblingIdx = datasetsSorted.length - 1
+      } else if (siblingIdx >= datasetsSorted.length) {
+        siblingIdx = 0
       }
 
-      const currentRow = selectedId
-        ? tbodyRef.current.children.namedItem(selectedId)
-        : null
+      const sibling = datasetsSorted[siblingIdx]
 
-      let sibling = up
-        ? currentRow?.previousElementSibling
-        : currentRow?.nextElementSibling
-
-      if (!sibling) {
-        // if none selected and up pressed, select last item
-        if (up) {
-          sibling = tbodyRef.current.lastElementChild
-        } else {
-          sibling = tbodyRef.current.firstElementChild
-        }
-
-        // somehow still nothing?
-        if (!sibling) return
-      }
-
-      ;(sibling as any).focus()
       onSelectRow(sibling.id)
     },
-    [selectedId],
+    [selectedId, JSON.stringify(datasetsSorted)],
   )
 
   const options: Options = {
@@ -93,8 +95,18 @@ export function useKeyboardShortcuts(
     enableOnFormTags: ['radio', 'select'], // capture keys even on toggle buttons
   }
 
-  useHotkeys('up, k', () => handleSelectSibling(true), options, [selectedId])
-  useHotkeys('down, j', () => handleSelectSibling(false), options, [selectedId])
+  useHotkeys(
+    'up, k',
+    ({ repeat, timeStamp }) => handleSelectSibling(true, repeat, timeStamp),
+    options,
+    [selectedId, handleSelectSibling],
+  )
+  useHotkeys(
+    'down, j',
+    ({ repeat, timeStamp }) => handleSelectSibling(false, repeat, timeStamp),
+    options,
+    [selectedId, handleSelectSibling],
+  )
   useHotkeys(
     'f',
     () => {
@@ -102,7 +114,7 @@ export function useKeyboardShortcuts(
       cycleQc(selectedId)
     },
     options,
-    [selectedId, datasets],
+    [selectedId, cycleQc],
   )
   // keys 0-9
   Array(10)
@@ -115,7 +127,7 @@ export function useKeyboardShortcuts(
           updateRank(selectedId, i)
         },
         options,
-        [selectedId, datasets],
+        [selectedId, updateRank],
       )
     })
 
