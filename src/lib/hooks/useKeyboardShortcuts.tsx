@@ -99,13 +99,13 @@ export function useKeyboardShortcuts(
     'up, k',
     ({ repeat, timeStamp }) => handleSelectSibling(true, repeat, timeStamp),
     options,
-    [selectedId],
+    [selectedId, handleSelectSibling],
   )
   useHotkeys(
     'down, j',
     ({ repeat, timeStamp }) => handleSelectSibling(false, repeat, timeStamp),
     options,
-    [selectedId],
+    [selectedId, handleSelectSibling],
   )
   useHotkeys(
     'f',
