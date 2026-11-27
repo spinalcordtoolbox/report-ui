@@ -11,6 +11,7 @@ export type ColumnVisibility = {
   cmdline: boolean
   rank: boolean
   qc: boolean
+  notes: boolean
 }
 
 
