@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 export default function SearchBox({
   value,
@@ -11,7 +11,7 @@ export default function SearchBox({
   ref: React.RefObject<HTMLInputElement | null>
 }) {
   const isMac = useMemo(() => navigator.userAgent.includes('Mac'), [])
-  const hasFocus = document.activeElement === ref.current
+  const [hasFocus, setHasFocus] = useState(false)
 
   return (
     <div>
@@ -37,6 +37,8 @@ export default function SearchBox({
           placeholder="&#x1F50E;&#xFE0E; Search"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setHasFocus(true)}
+          onBlur={() => setHasFocus(false)}
         />
         <div
           className={classNames(
