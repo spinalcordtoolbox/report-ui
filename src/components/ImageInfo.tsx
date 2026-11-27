@@ -3,7 +3,6 @@ import classNames from 'classnames'
 
 import { FitMode } from '@/ImageDisplay'
 import Button from '@/components/Button'
-import RadioSelect from '@/components/SelectFitMode'
 import KeyIcon from '@/components/KeyIcon'
 
 export function ImageInfo({
@@ -43,7 +42,6 @@ export function ImageInfo({
           <span className="leading-0">Toggle image fit</span>
           <KeyIcon label="D" className="pb-0.5" />
         </Button>
-        <RadioSelect fitMode={fitMode} onChangeFitMode={onChangeFitMode} />
       </div>
       <div className="w-full flex flex-col overflow-y-scroll overflow-x-clip p-2 border-gray-500 rounded-sm border-1">
         <div className="space-x-2">
