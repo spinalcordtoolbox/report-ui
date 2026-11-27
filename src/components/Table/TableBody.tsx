@@ -38,13 +38,24 @@ function TableBody({
 
   const ref = useRef<HTMLTableSectionElement>(null)
 
+  /* Track the current version of datasetsSorted in a ref, so that the useLayoutEffect below can
+   * only depend on selectedId. This way, changes in datasetsSorted (new sort, search change, QC
+   * flag change, etc.) don't trigger a re-focus of the current selected row.
+   */
+  const datasetsRef = useRef<Dataset[]>(datasetsSorted)
+  useLayoutEffect(() => {
+    datasetsRef.current = datasetsSorted
+  })
+
   /* On any change in selected row, ensure the selected row is being rendered by the virtualizer,
    * then focus that row */
   useLayoutEffect(() => {
     if (!ref.current || !selectedId) return
 
     /* Make sure virtual row is actually in view so the DOM element exists */
-    const selectedIdx = datasetsSorted.findIndex((d) => d.id === selectedId)
+    const selectedIdx = datasetsRef.current.findIndex(
+      (d) => d.id === selectedId,
+    )
     rowVirtualizer.scrollToIndex(selectedIdx)
 
     const selectedElement = ref.current.querySelector<HTMLTableRowElement>(
@@ -56,7 +67,7 @@ function TableBody({
     }
 
     selectedElement.focus()
-  }, [selectedId, datasetsSorted])
+  }, [selectedId])
 
   return (
     <tbody
