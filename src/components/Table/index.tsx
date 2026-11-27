@@ -34,7 +34,7 @@ import {
 } from '@/components/Table/types'
 import allKeywordsFilter from '@/components/Table/filter'
 import { defaultColumns, TableStateUpdateFn } from '@/lib/hooks/useTableState'
-import TableBody from './TableBody'
+import TableBody from '@/components/Table/TableBody'
 import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 import { replaceDatasetState } from '@/util/replace'
 
