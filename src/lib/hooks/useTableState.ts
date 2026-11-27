@@ -127,16 +127,16 @@ export function useTableState(): ReturnType {
       sorting,
       rowFilter,
     }: TableStateUpdater) => {
-      if (columnOrder) {
+      if (columnOrder !== undefined) {
         setColumnOrder(columnOrder)
       }
-      if (sorting) {
+      if (sorting !== undefined) {
         setSorting(sorting)
       }
-      if (rowFilter) {
+      if (rowFilter !== undefined) {
         setRowFilter(rowFilter)
       }
-      if (columnVisibility) {
+      if (columnVisibility !== undefined) {
         setColumnVisibility(columnVisibility)
       }
     },
