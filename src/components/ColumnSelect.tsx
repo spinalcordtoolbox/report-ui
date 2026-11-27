@@ -92,7 +92,7 @@ export default function ColumnSelect({
       <div
         id="focus-target"
         className={classNames(
-          'absolute left-0 z-10 mt-1 w-56 origin-top-left rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden transform',
+          'absolute left-0 z-50 mt-1 w-56 origin-top-left rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden transform',
           {
             'transition ease-out duration-100': entering,
             'transition ease-in duration-75': leaving,
