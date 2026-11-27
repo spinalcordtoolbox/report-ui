@@ -33,7 +33,10 @@ export default function SearchBox({
           type="text"
           name="search"
           id="search"
-          className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+          className={classNames(
+            'block min-w-48 grow py-1.5 pr-3 pl-1 text-base text-gray-900',
+            'placeholder:text-gray-400 focus:outline-none sm:text-sm/6',
+          )}
           placeholder="&#x1F50E;&#xFE0E; Search"
           value={value}
           onChange={(e) => onChange(e.target.value)}
