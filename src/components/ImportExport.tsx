@@ -33,7 +33,7 @@ export function ImportExport({
     )
 
     saveAs(blob, 'qc_report.json')
-  }, [datasets])
+  }, [datasets, tableState])
 
   const loadFromFile = useCallback(
     (parsedObject: { datasets: Dataset[]; tableState?: TableState }) => {
