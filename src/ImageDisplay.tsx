@@ -19,7 +19,8 @@ const IMAGE_DISPLAY_HEIGHT_CLASS = 'h-[calc(100%_-_--spacing(52))]'
 
 // These essentially work as assertions, because TS will throw an error at build time if they don't match
 IMAGE_INFO_HEIGHT_CLASS === `min-h-${IMAGE_INFO_HEIGHT}`
-IMAGE_DISPLAY_HEIGHT_CLASS === `h-[calc(100%_-_--spacing(${IMAGE_INFO_HEIGHT + IMAGE_INFO_SPACING}))]`
+IMAGE_DISPLAY_HEIGHT_CLASS ===
+  `h-[calc(100%_-_--spacing(${IMAGE_INFO_HEIGHT + IMAGE_INFO_SPACING}))]`
 IMAGE_INFO_SPACING_CLASS === `space-y-${IMAGE_INFO_SPACING}`
 
 export type FitMode = 'fit' | 'full'
@@ -47,7 +48,7 @@ export default function ImageDisplay({
       className={classNames(
         className,
         'flex flex-col flex-nowrap relative',
-        IMAGE_INFO_SPACING_CLASS
+        IMAGE_INFO_SPACING_CLASS,
       )}
     >
       <ImageOverlay
