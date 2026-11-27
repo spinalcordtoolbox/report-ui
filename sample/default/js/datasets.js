@@ -14,7 +14,8 @@ window.SCT_QC_DATASETS = [
     "overlayImage": "sample/default/data/sct_example_data/t2/sct_deepseg/2025_03_07_100540.073184/overlay_img.png",
     "date": "2025-03-07 10:05:40",
     "rank": "",
-    "qc": ""
+    "qc": "",
+    "notes": "This is a test note"
   },
   {
     "path": "/path/to/spinalcordtoolbox/data/sct_example_data/t2",

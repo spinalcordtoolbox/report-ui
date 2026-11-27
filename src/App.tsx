@@ -7,7 +7,7 @@ import Loading from '@/components/Loading'
 import ImageDisplay, { FitMode } from '@/ImageDisplay'
 
 import '@/util/devData'
-import Datasets from './components/Datasets'
+import Datasets from '@/components/Datasets'
 
 function App() {
   const [backgroundImage, setBackgroundImage] = useState('')

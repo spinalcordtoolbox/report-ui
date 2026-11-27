@@ -13,6 +13,7 @@ import {
 } from '@/components/Table/types'
 import { useStorage } from '@/lib/hooks/useStorage'
 import { getConstants } from '@/util/constants'
+import { EditableCell } from '@/components/Table/EditableCell'
 
 export const defaultColumns: ColumnDef<Dataset>[] = [
   {
@@ -58,6 +59,13 @@ export const defaultColumns: ColumnDef<Dataset>[] = [
     header: 'QC',
     size: 60,
   },
+  {
+    accessorKey: 'notes',
+    header: 'Notes',
+    size: 250,
+    minSize: 250,
+    cell: EditableCell,
+  },
   { accessorKey: 'position', enableHiding: true },
 ]
 
@@ -72,6 +80,7 @@ const DEFAULT_COLUMN_VISIBILITY: ColumnVisibility = {
   cmdline: false,
   rank: false,
   qc: true,
+  notes: false,
 }
 
 type TableStateUpdater = Partial<{

@@ -7,7 +7,12 @@ import {
   useState,
 } from 'react'
 import classNames from 'classnames'
-import { flexRender, getFilteredRowModel, Updater } from '@tanstack/react-table'
+import {
+  flexRender,
+  getFilteredRowModel,
+  RowData,
+  Updater,
+} from '@tanstack/react-table'
 import {
   ColumnOrderState,
   getCoreRowModel,
@@ -29,11 +34,19 @@ import {
 } from '@/components/Table/types'
 import allKeywordsFilter from '@/components/Table/filter'
 import { defaultColumns, TableStateUpdateFn } from '@/lib/hooks/useTableState'
-import TableBody from './TableBody'
+import TableBody from '@/components/Table/TableBody'
 import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts'
 import { replaceDatasetState } from '@/util/replace'
 
 export type { TableState } from '@/components/Table/types'
+
+// https://tanstack.com/table/v8/docs/framework/react/examples/editable-data
+// https://tanstack.com/table/v8/docs/api/core/table#meta
+declare module '@tanstack/react-table' {
+  interface TableMeta<TData extends RowData> {
+    updateData: (rowIndex: number, columnId: string, value: unknown) => void
+  }
+}
 
 export type PropTypes = {
   datasets: Dataset[]
@@ -86,41 +99,6 @@ function Table({
     [],
   )
 
-  const dataTable = useReactTable<Dataset>({
-    data: datasets,
-    columns,
-    defaultColumn: {
-      minSize: 20,
-      maxSize: 400,
-    },
-    state: {
-      columnVisibility: {
-        ...columnVisibility,
-        position: false,
-      },
-      columnOrder,
-      sorting,
-      globalFilter: rowFilter,
-    },
-    manualSorting: manualSort,
-    enableColumnResizing: true,
-    columnResizeMode: 'onChange',
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    onColumnVisibilityChange: setColumnVisibility as any,
-    onColumnOrderChange: setColumnOrder,
-    onSortingChange: sortByColumns,
-    getRowId: (row) => row.id,
-    getFilteredRowModel: getFilteredRowModel(),
-    globalFilterFn: allKeywordsFilter,
-  })
-
-  const { rows } = dataTable.getRowModel()
-  const datasetsSorted = useMemo(
-    () => dataTable.getSortedRowModel().rows.map((r) => r.original),
-    [tableState.sorting, rows],
-  )
-
   const changeDataset = useCallback(
     (id: string, replaceDataset: Partial<Dataset>) => {
       /*
@@ -151,6 +129,48 @@ function Table({
       onChangeDatasets(replaceDatasetState(id, replaceDataset))
     },
     [JSON.stringify(tableState.sorting)],
+  )
+
+  const dataTable = useReactTable<Dataset>({
+    data: datasets,
+    columns,
+    defaultColumn: {
+      minSize: 20,
+      maxSize: 400,
+    },
+    state: {
+      columnVisibility: {
+        ...columnVisibility,
+        position: false,
+      },
+      columnOrder,
+      sorting,
+      globalFilter: rowFilter,
+    },
+    meta: {
+      // allow updatable fields
+      updateData: (rowIndex, columnId, value) => {
+        const dataset = datasets[rowIndex]
+        changeDataset(dataset.id, { [columnId]: value })
+      },
+    },
+    manualSorting: manualSort,
+    enableColumnResizing: true,
+    columnResizeMode: 'onChange',
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onColumnVisibilityChange: setColumnVisibility as any,
+    onColumnOrderChange: setColumnOrder,
+    onSortingChange: sortByColumns,
+    getRowId: (row) => row.id,
+    getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: allKeywordsFilter,
+  })
+
+  const { rows } = dataTable.getRowModel()
+  const datasetsSorted = useMemo(
+    () => dataTable.getSortedRowModel().rows.map((r) => r.original),
+    [tableState.sorting, rows],
   )
 
   const searchRef = useRef<HTMLInputElement>(null)

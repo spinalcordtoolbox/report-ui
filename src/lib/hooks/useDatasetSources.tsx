@@ -51,10 +51,12 @@ export function useDatasetSources(): [
         const [id, dataset] = pair
         let qc = ''
         let rank = null
+        let notes = ''
         const localMatch = storedDatasets.find((d) => d.id && d.id === id)
         if (localMatch) {
           qc = localMatch.qc
           rank = localMatch.rank
+          notes = localMatch.notes ?? ''
         }
 
         return {
@@ -62,6 +64,7 @@ export function useDatasetSources(): [
           id,
           qc,
           rank,
+          notes,
           backgroundImage: `${DATASETS_PATH_PREFIX}${dataset.backgroundImage}`,
           overlayImage: `${DATASETS_PATH_PREFIX}${dataset.overlayImage}`,
         }

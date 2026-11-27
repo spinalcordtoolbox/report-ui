@@ -22,6 +22,7 @@ export interface Dataset {
   date: string
   rank: number | null
   qc: string
+  notes?: string
 }
 
 interface PropTypes {
