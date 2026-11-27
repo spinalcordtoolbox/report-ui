@@ -42,7 +42,7 @@ export default function SearchBox({
           className={classNames(
             'absolute right-4 flex items-center space-x-2 transition-opacity',
             {
-              'opacity-0': hasFocus,
+              'opacity-0': hasFocus || !!value,
             },
           )}
         >
